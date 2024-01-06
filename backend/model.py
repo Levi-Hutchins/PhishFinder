@@ -1,4 +1,5 @@
 import pandas as pd
+import joblib
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
@@ -35,6 +36,10 @@ df.dropna(inplace=True)
 X = df[features]
 Y = df["Result"]
 
+print(X.shape, Y.shape)
+
+# X shape (11055, 16)
+# Y shape (11055)
 X.drop_duplicates()
 Y.drop_duplicates()
 
@@ -50,7 +55,13 @@ def find_n_neighbors():
         pred_i = knn.predict(X_test)
         misclassified.append((y_test != pred_i).sum())
 
-knn_classifier = KNeighborsClassifier(n_neighbors=20)
+knn_classifier = KNeighborsClassifier(
+    n_neighbors=10,
+    weights='distance',
+    algorithm='auto',
+    leaf_size=20,
+    p=2,
+    metric='minkowski')
 
 
 knn_classifier.fit(X_train, y_train)
@@ -64,3 +75,7 @@ print("Recall:", recall_score(y_test, y_pred, average='macro'))
 print("F1 Score:", f1_score(y_test, y_pred, average='macro'))
 print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 print("\n--------------------------------------")
+
+z = knn_classifier.predict([[1,-1,0,0,1,-1,-1,1,1,1,0,-1,1,0,0,-1]])
+print(z)
+joblib.dump(knn_classifier,'./pkl/model.pkl')
