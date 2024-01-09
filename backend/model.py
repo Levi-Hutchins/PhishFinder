@@ -1,13 +1,13 @@
 import pandas as pd
-import joblib
-import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.svm import LinearSVC
 from sklearn.neighbors import KNeighborsClassifier
-from config.paths_config import DATA
-import random as r
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
-df = pd.read_csv(DATA)
+from config.paths_config import DATA, MODEL_PATH
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
+from sklearn.utils import shuffle
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
 # These are the features I selected to be most important when identifying a phishing link
 features = [
@@ -29,8 +29,11 @@ features = [
     "DNSRecord"
     ]
 
+df = shuffle(pd.read_csv(DATA))
+
 df.dropna(inplace=True)
 
+print(df.head)
 
 
 X = df[features]
@@ -45,27 +48,18 @@ Y.drop_duplicates()
 
 X_train, X_test, y_train, y_test = train_test_split(X, Y, train_size=0.8, test_size=0.2, shuffle=True)
 
-# Allow me to determine the best K neighbours required
-def find_n_neighbors():
-    misclassified = []
-
-    for i in range(1,20):
-        knn = KNeighborsClassifier(n_neighbors=i)
-        knn.fit(X_train, y_train)
-        pred_i = knn.predict(X_test)
-        misclassified.append((y_test != pred_i).sum())
-
+# Parameters were found via hyper parameter tuning doing in ProjectPrepML
 knn_classifier = KNeighborsClassifier(
     n_neighbors=10,
-    weights='distance',
-    algorithm='auto',
     leaf_size=20,
-    p=2,
-    metric='minkowski')
+    metric='minkowski',
+    p=1,
+    weights='distance'
 
-
+)
 knn_classifier.fit(X_train, y_train)
 y_pred = knn_classifier.predict(X_test)
+
 
 # Stats
 print("---------- Model Statistics ----------\n")
@@ -76,6 +70,13 @@ print("F1 Score:", f1_score(y_test, y_pred, average='macro'))
 print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 print("\n--------------------------------------")
 
-z = knn_classifier.predict([[1,-1,0,0,1,-1,-1,1,1,1,0,-1,1,0,0,-1]])
-print(z)
-joblib.dump(knn_classifier,'./pkl/model.pkl')
+
+# pkl can be subjected to arbitrary code execution so switched to onnx 
+# which is faster and more secure
+initial_type = [('float_input', FloatTensorType([None, X_train.shape[1]]))]
+
+onnx_model = convert_sklearn(knn_classifier, initial_types=initial_type)
+
+with open(MODEL_PATH, "wb") as f:
+    f.write(onnx_model.SerializeToString())
+
