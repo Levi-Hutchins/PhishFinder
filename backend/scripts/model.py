@@ -1,6 +1,5 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.svm import LinearSVC
 from sklearn.neighbors import KNeighborsClassifier
 
 from config.paths_config import DATA, MODEL_PATH
@@ -20,13 +19,10 @@ features = [
     "SSLfinal_State", # URL uses HTTPS
     "Domain_registeration_length", # URL domain is registed for short period 
     "HTTPS_token", # URL contains http://https
-    "Google_Index", # Can be find via google or not
-    "Page_Rank", # Measures how important a page is on the internet 0 or 1
-    "port", # Scammers open all ports on there server to allow all services
-    "Favicon", # If the favicon is loaded from a domain other than that shown in the address bar - phish
-    "Abnormal_URL", # Fetch by WHOIS database - API
-    "age_of_domain", # Check current domain age
-    "DNSRecord"
+    #"Google_Index", # Can be find via google or not- DROPPED
+    #"Page_Rank", # Measures how important a page is on the internet 0 or 1 DROPPED
+    #"port", # Scammers open all ports on there server to allow all services
+
     ]
 
 df = shuffle(pd.read_csv(DATA))
@@ -59,6 +55,7 @@ knn_classifier = KNeighborsClassifier(
 )
 knn_classifier.fit(X_train, y_train)
 y_pred = knn_classifier.predict(X_test)
+
 
 
 # Stats

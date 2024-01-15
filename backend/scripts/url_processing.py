@@ -14,15 +14,11 @@ Requirements to make a prediction:
     "double_slash_redirecting", # URL contains redirect to another site - COMPLETE
     "having_Sub_Domain", # www.aus.go.au - COMPLETE
     "SSLfinal_State", # URL uses HTTPS - COMPLETE
-    "Domain_registeration_length", # URL domain is registed for short period - TODO
-    "HTTPS_token", # URL contains http://https - TODO
-    "Google_Index", # Can be find via google or not - TODO
-    "Page_Rank", # Measures how important a page is on the internet 0 or 1 - TODO
-    "port", # Scammers open all ports on there server to allow all services - TODO
-    "Favicon", # If the favicon is loaded from a domain other than that shown in the address bar - phish - TODO
-    "Abnormal_URL", # Fetch by WHOIS database - API - TODO
-    "age_of_domain", # Check current domain age - TODO
-    "DNSRecord"
+    "Domain_registeration_length", # URL domain is registed for short period - COMPLETE
+    "HTTPS_token", # URL contains http://https - COMPLETE
+    "Google_Index", # Can be find via google or not - TODO Dont know how at this stage dropping from model training
+    "Page_Rank", # Measures how important a page is on the internet 0 or 1 - TODO Dont know how at this stage dropping from model training
+    "port", # Scammers open all ports on there server to allow all services - TODO would like to figure out how to securely implement this
 '''
 def verify_ssl(url):
     try:
@@ -50,7 +46,7 @@ def verify_domain_reglen(url):
     if domain_age_days > 365 and time_until_expiration_days > 365: return 1  
 
     elif domain_age_days < 365 and time_until_expiration_days < 365: return -1  
-    
+
     else: return 0  
 
 
@@ -83,6 +79,8 @@ def get_url_prediction_values(url_string: str):
 
     x_values.append(verify_ssl(url_string))
 
+    x_values.append(verify_domain_reglen(url_string))
+
     x_values.append(-1) if "https" in url_string and "https" != url_string[:5] else x_values.append(1)
 
     return x_values
@@ -91,5 +89,4 @@ def get_url_prediction_values(url_string: str):
 
 #print(get_url_prediction_values("http://httpsshorturl.at/bnsvZ"))
 #print(verify_domain("stackoverflow.com"))
-print(verify_domain_reglen("https://www.youtube.com/watch?v=R9dwUvBNzeM"))
 
