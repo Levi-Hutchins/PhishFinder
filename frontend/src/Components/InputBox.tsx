@@ -85,10 +85,13 @@ const InputBox: React.FC = () => {
             position: "relative", // Add this to handle positioning
           }}
           onMouseOver={(e) =>
-            (e.currentTarget.style.backgroundColor = "#0056b3")
+            (e.currentTarget.style.backgroundColor = "#0056b3",
+            e.currentTarget.style.borderBlock = "#000000"
+            )
           }
           onMouseOut={(e) =>
-            (e.currentTarget.style.backgroundColor = "#007bff")
+            (e.currentTarget.style.backgroundColor = "#007bff"
+            )
           }
           disabled={isLoading} // Disable the button when loading
         >

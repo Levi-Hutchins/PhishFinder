@@ -16,8 +16,11 @@
 }
 .phishguard-title{
   font-size: 100px;
-  color: #161618;
+  color: #7e02d4;
   font-family: 'Open Sans', sans-serif;
+}
+.title-container {
+  margin-top: -1px; /* Adjust this value as needed */
 }
 
 
