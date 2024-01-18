@@ -7,15 +7,23 @@ from models import PhishingLink, PredictionResponse,URLScanResponse,EngineResult
 
 app = FastAPI()
 
-def get_api_headers(reference_code: int, user_req: PhishingLink):
-    if reference_code == 0:
-        url = "https://www.virustotal.com/api/v3/urls"
-        payload = {"url": user_req.url_link}
-        headers = {
-            "accept": "application/json",
-            "x-apikey": VIRUS_TOTAL
-        }
-        return url, payload, headers
+def get_scanning_headers(user_req: PhishingLink):
+    url = "https://www.virustotal.com/api/v3/urls"
+    payload = {"url": user_req.url_link}
+    headers = {
+        "accept": "application/json",
+        "x-apikey": VIRUS_TOTAL
+    }
+    return url, payload, headers
+
+def get_analytics_headers(scanned_url: URLScanResponse):
+    url = f"https://www.virustotal.com/api/v3/analyses/{scanned_url.id}"
+    headers = {
+    "accept": "application/json",
+    "x-apikey": VIRUS_TOTAL
+    }
+    return url, headers
+
 
 
 
@@ -38,7 +46,7 @@ async def inhouse_model_prediction(user_req: PhishingLink):
 
 @app.post("/virus_total_urlscan/")
 async def virus_total_api(user_req: PhishingLink):
-    url, payload, headers = get_api_headers(0, user_req)
+    url, payload, headers = get_scanning_headers()
 
     try:
         async with httpx.AsyncClient() as client:
@@ -62,11 +70,8 @@ async def virus_total_api(user_req: PhishingLink):
         raise HTTPException(status_code=500, detail=f"HTTP request failed: {exc}")
 
 async def virus_total_analysis(scanned_url: URLScanResponse):
-    url = f"https://www.virustotal.com/api/v3/analyses/{scanned_url.id}"
-    headers = {
-    "accept": "application/json",
-    "x-apikey": VIRUS_TOTAL
-    }
+    
+    url, headers = get_analytics_headers
 
     async with httpx.AsyncClient() as client:
         response = await client.get(url, headers=headers)
