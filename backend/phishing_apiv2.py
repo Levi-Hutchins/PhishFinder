@@ -25,8 +25,6 @@ def get_analytics_headers(scanned_url: URLScanResponse):
     return url, headers
 
 
-
-
 @app.post("/link_prediction/")
 async def inhouse_model_prediction(user_req: PhishingLink):
     x_labels = url_processing.get_url_prediction_values(user_req.url_link)
@@ -46,7 +44,7 @@ async def inhouse_model_prediction(user_req: PhishingLink):
 
 @app.post("/virus_total_urlscan/")
 async def virus_total_api(user_req: PhishingLink):
-    url, payload, headers = get_scanning_headers()
+    url, payload, headers = get_scanning_headers(user_req)
 
     try:
         async with httpx.AsyncClient() as client:
@@ -55,31 +53,51 @@ async def virus_total_api(user_req: PhishingLink):
 
             try:
                 user_requested_url = URLScanResponse(id=response.json()["data"]["id"])
-            except KeyError:
+            except KeyError: 
                 # Logging
+                print(f"KeyError: /virus_total_urlscan/: Request URL = {user_requested_url}")
                 raise HTTPException(status_code=500, detail="Unexpected response format from VirusTotal API")
 
             analysis_report: ScanAnalysisReport = await virus_total_analysis(user_requested_url)
         return analysis_report.model_dump()
     except httpx.HTTPStatusError as exc:
         # Logging
+        print(f"HTTPStatusError: /virus_total_urlscan/  {exc}")
         raise HTTPException(status_code=exc.response.status_code, detail="Error from VirusTotal API")
     
     except httpx.RequestError as exc:
         # Logging
+        print(f"RequestError: /virus_total_urlscan/  {exc}")
         raise HTTPException(status_code=500, detail=f"HTTP request failed: {exc}")
+
 
 async def virus_total_analysis(scanned_url: URLScanResponse):
     
-    url, headers = get_analytics_headers
+    url, headers = get_analytics_headers(scanned_url)
 
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=headers)
-        if response.status_code != 200:
-            raise HTTPException(status_code=response.status_code, detail="Error from VirusTotal API")
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, headers=headers)
+            response.raise_for_status()
+            try:
+                analysis_response = response.json()
+                stats_data = Stats(**analysis_response['data']['attributes']['stats'])
+                engine_results_data = {k: EngineResults(**v) for k, v in analysis_response['data']['attributes']['results'].items()}
+                return ScanAnalysisReport(stats=stats_data, results=engine_results_data)
+            except KeyError:
+                # Logging
+                print(f"KeyError: virus_total_analysis: {analysis_response}")
+                raise HTTPException(status_code=500, detail="Unexpected response format from VirusTotal API")
+            
+    except httpx.HTTPStatusError as exc:
+        # Logging
+        print(f"HTTPStatusError: virus_total_analysis {exc}")
+        raise HTTPException(status_code=exc.response.status_code, detail="Error from VirusTotal API")
+    
+    except httpx.RequestError as exc:
+        # Logging
+        print(f"RequestError: virus_total_analysis {exc}")
+        raise HTTPException(status_code=500, detail=f"HTTP request failed: {exc}")
+        
 
-        analysis_response = response.json()
-        stats_data = Stats(**analysis_response['data']['attributes']['stats'])
-        engine_results_data = {k: EngineResults(**v) for k, v in analysis_response['data']['attributes']['results'].items()}
-        analysis_report = ScanAnalysisReport(stats=stats_data, results=engine_results_data)
-        return analysis_report
+            
