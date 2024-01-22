@@ -58,7 +58,7 @@ const InputBox: React.FC = () => {
           type="text"
           value={inputValue}
           onChange={handleChange}
-          placeholder="Enter your password"
+          placeholder="Enter a URL"
           style={{
             width: "100%",
             height: "50px",
