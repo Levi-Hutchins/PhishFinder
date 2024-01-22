@@ -1,7 +1,7 @@
 import onnx
 import onnxruntime as rt
 import numpy as np
-import config.paths_config 
+import scripts.config.paths_config 
 
 
 def make_prediction(predict_me):

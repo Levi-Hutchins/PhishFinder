@@ -1,5 +1,6 @@
 import httpx
-
+import html
+import bleach
 
 from fastapi import FastAPI, HTTPException
 
@@ -29,22 +30,36 @@ def get_analytics_headers(scanned_url: URLScanResponse):
     return url, headers
 
 
+def isSanitized(input_url: str) -> str:
+    if "<" or ">" in input_url: return False
+
+
+
+    sanitised0 = bleach.clean(input_url, tags=[])
+    sanitised1 = html.escape(sanitised0)
+
+    print(sanitised1)
+
+
+
 @app.post("/link_prediction/")
 async def inhouse_model_prediction(user_req: PhishingLink):
-    x_labels = url_processing.get_url_prediction_values(user_req.url_link)
+    if isSanitized(user_req.url_link):
+        x_labels = url_processing.get_url_prediction_values(user_req.url_link)
 
-    # Some exception handling just incase url processing fails
-    if len(x_labels) != 9:
-        raise HTTPException(status_code=404, detail="Issue with url processing")
-    
-    prediction = model_prediction.make_prediction(x_labels)
+        # Some exception handling just incase url processing fails
+        if len(x_labels) != 9:
+            raise HTTPException(status_code=404, detail="Issue with url processing")
+        
+        prediction = model_prediction.make_prediction(x_labels)
 
-    if prediction[0] == -1: 
-        return PredictionResponse(status="phishing")
-    elif prediction[0] == 0: 
-        return PredictionResponse(status="suspicious")
-    else: 
-        return PredictionResponse(status="legitimate")
+        if prediction[0] == -1: 
+            return PredictionResponse(status="phishing")
+        elif prediction[0] == 0: 
+            return PredictionResponse(status="suspicious")
+        else: 
+            return PredictionResponse(status="legitimate")
+    return 404
 
 @app.post("/virus_total_urlscan/")
 async def virus_total_api(user_req: PhishingLink):
