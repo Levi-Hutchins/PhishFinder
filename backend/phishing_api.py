@@ -3,7 +3,7 @@ import httpx
 
 from fastapi import FastAPI, HTTPException
 
-from config.API_KEYS import VIRUS_TOTAL
+from scripts.config.API_KEYS import VIRUS_TOTAL
 
 from scripts import url_processing, model_prediction
 
