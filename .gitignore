@@ -1,2 +1,4 @@
 backend/config/API_KEYS.py
 backend/config/__pycache__/API_KEYS.cpython-311.pyc
+backend/scripts/config/API_KEYS.py
+backend/scripts/config/__pycache__/API_KEYS.cpython-311.pyc
