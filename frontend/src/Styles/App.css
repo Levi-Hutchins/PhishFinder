@@ -1,22 +1,24 @@
 
 .App {
   text-align: center;
-  background-color: #282c34;
+  background-color: #1b1d24;
 }
-
+body{
+  background-color: #1b1d24
+}
 .App-header {
-  background-color: #ffffff;
+  background-color: #1b1d24;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: #1b1d24;
 }
 .phishguard-title{
   font-size: 100px;
-  color: #18181b;
+  color: #C8C8C8;
   font-family: 'Open Sans', sans-serif;
 }
 .title-container {

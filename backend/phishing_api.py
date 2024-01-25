@@ -2,6 +2,7 @@ import httpx
 
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 from scripts.config.API_KEYS import VIRUS_TOTAL
 
@@ -10,6 +11,14 @@ from scripts import url_processing, model_prediction
 from models import PhishingLink, PredictionResponse,URLScanResponse,EngineResults, Stats, ScanAnalysisReport
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_scanning_headers(user_req: PhishingLink):
     url = "https://www.virustotal.com/api/v3/urls"
