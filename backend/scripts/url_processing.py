@@ -94,29 +94,30 @@ def clean_url(unclean_url: str) -> str:
 
 def get_url_prediction_values(url_string: str):
     x_values = []
-    contains_ip = r'(?:\d{1,3}\.){3}\d{1,3}'
-    x_values.append(-1) if re.search(contains_ip, url_string) else x_values.append(1)
-    x_values.append(-1) if len(url_string) >= 54 else x_values.append(1)
-    
     unvalidated_url = clean_url(url_string)
 
     if is_valid_url(unvalidated_url):
+        contains_ip = r'(?:\d{1,3}\.){3}\d{1,3}'
+        x_values.append(-1) if re.search(contains_ip, unvalidated_url) else x_values.append(1)
+        x_values.append(-1) if len(unvalidated_url) >= 54 else x_values.append(1)
+    
 
-        try: x_values.append(-1) if requests.head(url_string).status_code == 301 or requests.head(url_string).status_code == 302 else x_values.append(1)
+
+        try: x_values.append(-1) if requests.head(unvalidated_url).status_code == 301 or requests.head(unvalidated_url).status_code == 302 else x_values.append(1)
         except requests.ConnectionError: 
             print("Issue Checking Link")
             x_values.append(-1)
-        x_values.append(-1) if '@' in url_string else x_values.append(1)
+        x_values.append(-1) if '@' in unvalidated_url else x_values.append(1)
 
-        x_values.append(-1) if url_string.count("//") > 1 else x_values.append(1)
+        x_values.append(-1) if unvalidated_url.count("//") > 1 else x_values.append(1)
     
-        x_values.append(verify_subdomains(url_string))
+        x_values.append(verify_subdomains(unvalidated_url))
 
-        x_values.append(verify_ssl(url_string))
+        x_values.append(verify_ssl(unvalidated_url))
 
-        x_values.append(verify_domain_reglen(url_string))
+        x_values.append(verify_domain_reglen(unvalidated_url))
 
-        x_values.append(-1) if "https" in url_string and "https" != url_string[:5] else x_values.append(1)
+        x_values.append(-1) if "https" in unvalidated_url and "https" != unvalidated_url[:5] else x_values.append(1)
 
         return x_values
     else: return 404
