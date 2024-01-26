@@ -1,10 +1,4 @@
 import httpx
-import html
-
-import validators
-
-import re
-import bleach
 
 from urllib.parse import urlparse
 
@@ -13,6 +7,7 @@ from fastapi import FastAPI, HTTPException
 from scripts.config.API_KEYS import VIRUS_TOTAL
 
 from scripts import url_processing, model_prediction
+from scripts.url_processing import is_valid_url, clean_url
 
 from models import PhishingLink, PredictionResponse,URLScanResponse,EngineResults, Stats, ScanAnalysisReport
 
@@ -35,32 +30,15 @@ def get_analytics_headers(scanned_url: URLScanResponse):
     }
     return url, headers
 
-def validate_url(unvalidated_url: str) -> bool:
-    contains_escapedChars = r'&[#]?[a-zA-Z0-9]+;'
-    # Need to investiage more validation methods 
-    # Perform multiple validations to prevent false urls
 
-    isvalid_1 = validators.url(unvalidated_url)
-    isvalid_2 = re.match(contains_escapedChars, unvalidated_url)
-    if isvalid_1 and isvalid_2: return True
-    else: return False
-
-
-
-
-
-def clean_url(unclean_url: str) -> str:
-
-    clean_layer_1 = bleach.clean(unclean_url)
-    clean_layer_2 = html.escape(clean_layer_1)
-
-    return clean_layer_2
 
 
 @app.post("/link_prediction/")
 async def inhouse_model_prediction(user_req: PhishingLink):
     x_labels = url_processing.get_url_prediction_values(user_req.url_link)
 
+    if x_labels == 404:
+        return 404
     # Some exception handling just incase url processing fails
     if len(x_labels) != 9:
         raise HTTPException(status_code=404, detail="Issue with url processing")
@@ -78,7 +56,7 @@ async def inhouse_model_prediction(user_req: PhishingLink):
 async def virus_total_api(user_req: PhishingLink):
 
     unvalidated_url = clean_url(user_req.url_link)
-    if validate_url(unvalidated_url):
+    if is_valid_url(unvalidated_url):
     
     
         url, payload, headers = get_scanning_headers(unvalidated_url) # Is no validated

@@ -1,9 +1,16 @@
 import requests
 import whois
+
 import datetime
-from requests.exceptions import SSLError
+import html
+
+import validators
+
 import re
-import whois
+import bleach
+
+
+from requests.exceptions import SSLError
 from urllib.parse import urlparse
 '''
 Requirements to make a prediction:
@@ -21,12 +28,18 @@ Requirements to make a prediction:
     "port", # Scammers open all ports on there server to allow all services - TODO would like to figure out how to securely implement this
 '''
 def verify_ssl(url):
-    try:
-        if requests.get(url).ok: return 1
-    except SSLError as e:
-        return -1
-    except Exception as e:
-        return 0
+    unvalidated_url = clean_url(url)
+
+    if is_valid_url(unvalidated_url):
+
+        try:
+            if requests.get(url).ok: return 1
+        except SSLError as e:
+            return -1
+        except Exception as e:
+            return 0
+    else:
+        return 404
     
 def verify_domain_reglen(url):
     domain_data = whois.whois(url)
@@ -61,29 +74,52 @@ def verify_subdomains(url):
     except Exception as e: return 0
 
 
+
+def is_valid_url(unvalidated_url: str) -> bool:
+    contains_escapedChars = r'&[#]?[a-zA-Z0-9]+;'
+
+    isvalid_1 = validators.url(unvalidated_url)
+    isvalid_2 = re.search(contains_escapedChars, unvalidated_url)
+    if isvalid_1 and isvalid_2: return True
+    else: return False
+
+
+def clean_url(unclean_url: str) -> str:
+
+    clean_layer_1 = bleach.clean(unclean_url)
+    clean_layer_2 = html.escape(clean_layer_1)
+
+    return clean_layer_2
+
+
 def get_url_prediction_values(url_string: str):
     x_values = []
     contains_ip = r'(?:\d{1,3}\.){3}\d{1,3}'
     x_values.append(-1) if re.search(contains_ip, url_string) else x_values.append(1)
     x_values.append(-1) if len(url_string) >= 54 else x_values.append(1)
     
-    try: x_values.append(-1) if requests.head(url_string).status_code == 301 or requests.head(url_string).status_code == 302 else x_values.append(1)
-    except requests.ConnectionError: 
-        print("Issue Checking Link")
-        x_values.append(-1)
-    x_values.append(-1) if '@' in url_string else x_values.append(1)
+    unvalidated_url = clean_url(url_string)
 
-    x_values.append(-1) if url_string.count("//") > 1 else x_values.append(1)
-   
-    x_values.append(verify_subdomains(url_string))
+    if is_valid_url(unvalidated_url):
 
-    x_values.append(verify_ssl(url_string))
+        try: x_values.append(-1) if requests.head(url_string).status_code == 301 or requests.head(url_string).status_code == 302 else x_values.append(1)
+        except requests.ConnectionError: 
+            print("Issue Checking Link")
+            x_values.append(-1)
+        x_values.append(-1) if '@' in url_string else x_values.append(1)
 
-    x_values.append(verify_domain_reglen(url_string))
+        x_values.append(-1) if url_string.count("//") > 1 else x_values.append(1)
+    
+        x_values.append(verify_subdomains(url_string))
 
-    x_values.append(-1) if "https" in url_string and "https" != url_string[:5] else x_values.append(1)
+        x_values.append(verify_ssl(url_string))
 
-    return x_values
+        x_values.append(verify_domain_reglen(url_string))
+
+        x_values.append(-1) if "https" in url_string and "https" != url_string[:5] else x_values.append(1)
+
+        return x_values
+    else: return 404
 
 
 
