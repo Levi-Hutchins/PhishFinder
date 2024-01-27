@@ -3,6 +3,7 @@ import httpx
 from urllib.parse import urlparse
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 from scripts.config.API_KEYS import VIRUS_TOTAL
 
@@ -12,6 +13,14 @@ from scripts.url_processing import is_valid_url, clean_url
 from models import PhishingLink, PredictionResponse,URLScanResponse,EngineResults, Stats, ScanAnalysisReport
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_scanning_headers(user_req: str):
     url = "https://www.virustotal.com/api/v3/urls"
@@ -118,5 +127,3 @@ async def virus_total_analysis(scanned_url: URLScanResponse):
         print(f"RequestError: virus_total_analysis {exc}")
         raise HTTPException(status_code=500, detail=f"HTTP request failed: {exc}")
         
-
-            
