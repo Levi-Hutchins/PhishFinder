@@ -126,4 +126,3 @@ def get_url_prediction_values(url_string: str):
 
 #print(get_url_prediction_values("http://httpsshorturl.at/bnsvZ"))
 #print(verify_domain("stackoverflow.com"))
-
