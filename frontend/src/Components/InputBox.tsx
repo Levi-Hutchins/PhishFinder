@@ -1,12 +1,21 @@
 import { TailSpin } from "react-loader-spinner";
-import { UrlScanResponse } from "./Interfaces";
+import { UrlScanResponse, LinkPrediction, InputBoxProps } from "./Interfaces";
 import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 
-
-const InputBox: React.FC = () => {
+const InputBox: React.FC<InputBoxProps> = ({ onApiDataReceived }) => {
   const [inputValue, setInputValue] = useState("");
   const [urlLink, setUrlLink] = useState("");
   const [isLoading, setLoading] = useState(false);
+  const [isFocused, setFocused] = useState(false);
+
+  const handleFocused = () => {
+    setFocused(true);
+  };
+  const handleBlur = () => {
+    setFocused(false);
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -14,38 +23,68 @@ const InputBox: React.FC = () => {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    // Add better UI feature for invalid URLs
+    if (urlLink == "") {
+      alert("Please Enter Valid URL");
+      return;
+    }
+
     event.preventDefault();
     setLoading(true);
-    console.log(JSON.stringify({ url_link: urlLink }))
+    console.log(JSON.stringify({ url_link: urlLink }));
     try {
-      const response = await fetch("http://127.0.0.1:8000/virus_total_urlscan/", 
-      {
-        headers: {
-            'Accept': 'application/json',
-            "Content-Type": "application/json"
+      const virusTotalScan = await fetch(
+        "http://127.0.0.1:8000/virus_total_urlscan/",
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
           },
-        method: "POST",
+          method: "POST",
 
-        mode: "cors",
-        
-        body: JSON.stringify({ url_link: urlLink }),
-    });
+          mode: "cors",
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+          body: JSON.stringify({ url_link: urlLink }),
+        }
+      );
+
+      if (!virusTotalScan.ok) {
+        throw new Error(`Error: ${virusTotalScan.status}`);
       }
-      const urlScanData: UrlScanResponse = await response.json();
-      setLoading(false);
-      console.log(urlScanData.stats);
+      const urlScanData: UrlScanResponse = await virusTotalScan.json();
+      onApiDataReceived(urlScanData);
 
-
-      // Handle response data
-      
+      console.log(urlScanData);
     } catch (error) {
       console.error("Oops Issue with request:", error);
       setLoading(false);
     }
+    try {
+      const linkPrediction = await fetch(
+        "http://127.0.0.1:8000/link_prediction/",
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          method: "POST",
 
+          mode: "cors",
+
+          body: JSON.stringify({ url_link: urlLink }),
+        }
+      );
+
+      if (!linkPrediction.ok) {
+        throw new Error(`Error: ${linkPrediction.status}`);
+      }
+      const modelPrediction: LinkPrediction = await linkPrediction.json();
+      console.log(modelPrediction.status);
+    } catch (error) {
+      console.error("Oops Issue with request:", error);
+      setLoading(false);
+    }
+    setLoading(false);
   };
 
   return (
@@ -54,62 +93,83 @@ const InputBox: React.FC = () => {
         onSubmit={handleSubmit}
         style={{ textAlign: "center", margin: "20px" }}
       >
-        <input
-          type="text"
-          value={inputValue}
-          onChange={handleChange}
-          placeholder="Enter a URL"
+        <div
           style={{
-            width: "100%",
-            height: "50px",
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            border: isFocused ? "1px solid #bb86fc" : "1px solid #B1B1B1", // Change border color when focused
             borderRadius: "5px",
-            border: "1px solid #ccc",
-            padding: "5px 10px",
-            fontSize: "16px",
-            margin: "10px 0",
+            overflow: "hidden", // Ensures that the children do not overflow the rounded corners
           }}
-        />
-        <br />
-        <button
-          type="submit"
-          style={{
-            width: "150px",
-            height: "40px",
-            borderRadius: "5px",
-            border: "none",
-            backgroundColor: "#007bff",
-            color: "white",
-            fontSize: "16px",
-            cursor: "pointer",
-            outline: "none",
-            position: "relative", // Add this to handle positioning
-          }}
-          onMouseOver={(e) =>
-            (e.currentTarget.style.backgroundColor = "#0056b3",
-            e.currentTarget.style.borderBlock = "#000000"
-            )
-          }
-          onMouseOut={(e) =>
-            (e.currentTarget.style.backgroundColor = "#007bff"
-            )
-          }
-          disabled={isLoading} // Disable the button when loading
         >
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleChange}
+            onFocus={handleFocused}
+            onBlur={handleBlur}
+            placeholder="Enter a URL"
+            style={{
+              color: "#f3f6f9",
+              backgroundColor: "#4B4B4B",
+              flex: 1, // Ensures input stretches to fill space
+              //border: 'blue',
+              padding: "10px", // Adjust padding as needed
+              fontSize: "16px",
+              height: "40px", // Adjust height as needed
+              borderRadius: "5px", // Round the left corners only
+              marginRight: "-150px", // Negative margin to account for button width
+
+            }}
+          />
           {isLoading ? (
-            <div
-              style={{
-                position: "absolute",
-                left: "50%",
-                top: "50%",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              <TailSpin color="#00BFFF" height={40} width={40} />
-            </div>
+            <></>
           ) : (
-            "Calculate"
+            <button
+              type="submit"
+              style={{
+                marginTop: "8px",
+                marginRight: "10px",
+                width: "100px",
+                height: "75%",
+                border: "none",
+                backgroundColor: "#7D48BD",
+                color: "white",
+                fontSize: "16px",
+                cursor: "pointer",
+                outline: "none",
+                borderRadius: "5px", // Round the right corners only
+                position: "absolute", // Keep the button positioned to the right
+                top: "0", // Align to the top of the container
+                right: "0", // Align to the right of the container
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = "#5F378E";
+                e.currentTarget.textContent = "Go Phish";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = "#7D48BD";
+                e.currentTarget.textContent = "Scan URL";
+              }}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <TailSpin color="#00BFFF" height={20} width={20} />
+              ) : (
+                "Scan URL"
+              )}
+            </button>
           )}
-        </button>
+        </div>
+        <br />
+        {isLoading ? (
+          <Box sx={{ width: "50px%" }}>
+            <LinearProgress color="secondary" />
+          </Box>
+        ) : (
+          <></>
+        )}
       </form>
     </>
   );
