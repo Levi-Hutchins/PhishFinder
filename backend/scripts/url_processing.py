@@ -80,7 +80,8 @@ def is_valid_url(unvalidated_url: str) -> bool:
 
     isvalid_1 = validators.url(unvalidated_url)
     isvalid_2 = re.search(contains_escapedChars, unvalidated_url)
-    if isvalid_1 and isvalid_2: return True
+
+    if isvalid_1 and isvalid_2 == None: return True
     else: return False
 
 
