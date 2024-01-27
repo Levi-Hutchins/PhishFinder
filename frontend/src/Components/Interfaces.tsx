@@ -1,6 +1,7 @@
 export interface UrlScanResponse {
     stats: UrlStats;
-    reuslts: EngineResults
+    results: EngineResults
+    linkPrediction: string
 }
 
 
@@ -20,4 +21,16 @@ export interface EngineResults {
         method: string;
         engine_name: string;
     }
+}
+export interface LinkPrediction{
+    status: string;
+}
+
+export interface InputBoxProps {
+    onApiDataReceived: (urlScanData: UrlScanResponse) => void; // Replace 'any' with a more specific type as needed
+  }
+
+export interface URLResultsProps{
+    
+    urlScanData: UrlScanResponse
 }
