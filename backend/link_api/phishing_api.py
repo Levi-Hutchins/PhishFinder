@@ -126,4 +126,3 @@ async def virus_total_analysis(scanned_url: URLScanResponse):
         # Logging
         print(f"RequestError: virus_total_analysis {exc}")
         raise HTTPException(status_code=500, detail=f"HTTP request failed: {exc}")
-        
