@@ -1,10 +1,5 @@
 backend/config/API_KEYS.py
-backend/config/__pycache__/API_KEYS.cpython-311.pyc
 backend/scripts/config/API_KEYS.py
-backend/scripts/config/__pycache__/API_KEYS.cpython-311.pyc
-backend/__pycache__/models.cpython-311.pyc
-backend/__pycache__/models.cpython-311.pyc
-backend/__pycache__/phishing_api.cpython-311.pyc
-backend/scripts/__pycache__/url_processing.cpython-311.pyc
 backend/link_api/scripts/config/API_KEYS.py
 backend/link_api/scripts/config/__pycache__/API_KEYS.cpython-311.pyc
+*.pyc

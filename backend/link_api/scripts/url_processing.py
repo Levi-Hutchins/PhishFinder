@@ -1,11 +1,18 @@
 import requests
-from urllib.parse import urlparse
-import datetime
-import re
+
 import html
 import bleach
-from validators import url as url_validator
 import whois
+
+from urllib.parse import urlparse
+from validators import url as url_validator
+
+import datetime
+import re
+
+import sys
+
+sys.dont_write_bytecode = True
 
 def clean_url(unclean_url: str) -> str:
 

@@ -17,7 +17,9 @@ from scripts.config.API_KEYS import VIRUS_TOTAL
 
 from scripts import url_processing, model_prediction
 from scripts.url_processing import is_valid_url, clean_url
+import sys
 
+sys.dont_write_bytecode = True
 
 app = FastAPI()
 

@@ -6,4 +6,3 @@ from .EngineResults import EngineResults
 class ScanAnalysisReport(BaseModel):
     stats: Stats
     results: Dict[str, EngineResults]
-    evaluation: str
