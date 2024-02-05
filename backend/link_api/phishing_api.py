@@ -1,16 +1,23 @@
 import httpx
+import logging as logger
 
 from urllib.parse import urlparse
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from models.EngineResults import EngineResults
+from models.PhishingLink import PhishingLink
+from models.URLScanResponse import URLScanResponse
+from models.PredictionResponse import PredictionResponse
+from models.ScanAnalysisReport import ScanAnalysisReport
+from models.Stats import Stats
+
 from scripts.config.API_KEYS import VIRUS_TOTAL
 
 from scripts import url_processing, model_prediction
 from scripts.url_processing import is_valid_url, clean_url
 
-from models import PhishingLink, PredictionResponse,URLScanResponse,EngineResults, Stats, ScanAnalysisReport
 
 app = FastAPI()
 
@@ -39,15 +46,12 @@ def get_analytics_headers(scanned_url: URLScanResponse):
     }
     return url, headers
 
-
-
-
 @app.post("/link_prediction/")
 async def inhouse_model_prediction(user_req: PhishingLink):
-    x_labels = url_processing.get_url_prediction_values(user_req.url_link)
+    x_labels = url_processing.get_features(user_req.url_link)
 
     if x_labels == 404:
-        return 404
+        return "phishing"
     # Some exception handling just incase url processing fails
     if len(x_labels) != 9:
         raise HTTPException(status_code=404, detail="Issue with url processing")
@@ -80,26 +84,28 @@ async def virus_total_api(user_req: PhishingLink):
                 try:
                     user_requested_url = URLScanResponse(id=response.json()["data"]["id"])
                 except KeyError: 
+                    
+                    logger.error(f"KeyError: /virus_total_urlscan/: Request URL = {user_requested_url}")
                     # Logging
-                    print(f"KeyError: /virus_total_urlscan/: Request URL = {user_requested_url}")
                     raise HTTPException(status_code=500, detail="Unexpected response format from VirusTotal API")
 
                 analysis_report: ScanAnalysisReport = await virus_total_analysis(user_requested_url)
             return analysis_report.model_dump()
         except httpx.HTTPStatusError as exc:
             # Logging
-            print(f"HTTPStatusError: /virus_total_urlscan/  {exc}")
+            logger.error(f"HTTPStatusError: /virus_total_urlscan/  {exc}")
             raise HTTPException(status_code=exc.response.status_code, detail="Error from VirusTotal API")
         
         except httpx.RequestError as exc:
             # Logging
-            print(f"RequestError: /virus_total_urlscan/  {exc}")
+            logger.error(f"RequestError: /virus_total_urlscan/  {exc}")
             raise HTTPException(status_code=500, detail=f"HTTP request failed: {exc}")
     else:
         return 404
 
 
 async def virus_total_analysis(scanned_url: URLScanResponse):
+    
     
     url, headers = get_analytics_headers(scanned_url)
 
@@ -114,16 +120,15 @@ async def virus_total_analysis(scanned_url: URLScanResponse):
                 return ScanAnalysisReport(stats=stats_data, results=engine_results_data)
             except KeyError:
                 # Logging
-                print(f"KeyError: virus_total_analysis: {analysis_response}")
+                logger.error(f"KeyError: virus_total_analysis: {analysis_response}")
                 raise HTTPException(status_code=500, detail="Unexpected response format from VirusTotal API")
             
     except httpx.HTTPStatusError as exc:
         # Logging
-        print(f"HTTPStatusError: virus_total_analysis {exc}")
+        logger.error(f"HTTPStatusError: virus_total_analysis {exc}")
         raise HTTPException(status_code=exc.response.status_code, detail="Error from VirusTotal API")
     
     except httpx.RequestError as exc:
         # Logging
-        print(f"RequestError: virus_total_analysis {exc}")
+        logger.error(f"RequestError: virus_total_analysis {exc}")
         raise HTTPException(status_code=500, detail=f"HTTP request failed: {exc}")
-        

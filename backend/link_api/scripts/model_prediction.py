@@ -1,11 +1,10 @@
 import onnx
 import onnxruntime as rt
 import numpy as np
-import scripts.config.paths_config 
-
+from scripts.config.paths_config import MODEL_PATH
 
 def make_prediction(predict_me):
-    session = rt.InferenceSession("/Users/levi_1/Desktop/PhishGuard/backend/scripts/onnx/model.onnx")
+    session = rt.InferenceSession(MODEL_PATH)
 
     input_data_np = np.array([predict_me], dtype=np.float32)
 
