@@ -48,7 +48,7 @@ def having_sub_domain(url):
 
 def ssl_final_state(url):
     try:
-        response = requests.head(url, timeout=5, verify=True)
+        response = requests.head(clean_url(url), timeout=5, verify=True)
         if response.ok and urlparse(url).scheme == 'https':
             return 1
     except requests.exceptions.SSLError:
