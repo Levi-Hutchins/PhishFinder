@@ -1,7 +1,7 @@
 import onnx
 import onnxruntime as rt
 import numpy as np
-from scripts.config.paths_config import MODEL_PATH
+from config.paths_config import MODEL_PATH
 
 def make_prediction(predict_me):
     session = rt.InferenceSession(MODEL_PATH)
