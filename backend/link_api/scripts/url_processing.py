@@ -2,8 +2,18 @@ import requests
 from urllib.parse import urlparse
 import datetime
 import re
+import html
+import bleach
 from validators import url as url_validator
 import whois
+
+def clean_url(unclean_url: str) -> str:
+
+    clean_layer_1 = bleach.clean(unclean_url)
+    clean_layer_2 = html.escape(clean_layer_1)
+
+    return clean_layer_2
+
 
 def is_valid_url(url):
     try:
@@ -84,6 +94,6 @@ def get_features(url):
     return features
 
 # Example usage:
-url = "https://ozlotto.store"
-features = get_features(url)
-print(features)
+# url = "https://ozlotto.store"
+# features = get_features(url)
+# print(features)
