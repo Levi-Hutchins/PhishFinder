@@ -48,7 +48,7 @@ def get_analytics_headers(scanned_url: URLScanResponse):
 
 @app.post("/link_prediction/")
 async def inhouse_model_prediction(user_req: PhishingLink):
-    x_labels = url_processing.get_url_prediction_values(user_req.url_link)
+    x_labels = url_processing.get_features(user_req.url_link)
 
     if x_labels == 404:
         return "phishing"
