@@ -1,19 +1,24 @@
 import React from "react"
 import { UrlScanResponse } from "./Interfaces"
+import "../Styles/Results.css"
+import "../Styles/App.css"
+
 
 const URLResults: React.FC<UrlScanResponse> = ({linkPrediction,stats,results}) =>{
 
-    console.log("now")
 
     return(
-        <>
 
-        <p>
+        <div className="results-container">
 
-            {stats.harmless}
-        </p>
 
-        </>
+        <div className="panel">
+
+        </div>
+
+        </div>
+
+    
     )
 }
 

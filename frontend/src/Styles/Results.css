@@ -1,0 +1,16 @@
+.results-container {
+    display: flex;
+    position: relative;
+    top: -300px; /* Adjust this value based on your needs */
+    justify-content: space-around;
+  }
+  .panel {
+    flex-basis: 30%; 
+    border: 0.5px solid #656565; 
+    border-radius: 20px; 
+    box-shadow: 4 4px 6px rgba(62, 62, 62, 0.1); 
+    background-color: #424242; 
+    margin: 10px; 
+    height: 35vh; 
+    width: 40vh;
+  }
