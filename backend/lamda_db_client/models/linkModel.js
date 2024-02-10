@@ -1,17 +1,19 @@
 const mongoose = require("mongoose");
 
-const linkSchema = mongoose.Schema(
+const linkSchema = new mongoose.Schema(
   {
     link: {
       type: String,
       required: true,
+      trim: true
     },
     link_classification: {
       type: Number,
       required: true,
+      enum: [0,1]
     },
     scanned_by_VT: {
-      type: Number,
+      type: Boolean,
       required: true,
     },
   },
