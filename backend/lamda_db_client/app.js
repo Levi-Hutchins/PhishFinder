@@ -31,6 +31,16 @@ app.post("/insert_email_data", async(req, res) => {
     }
 })
 
+app.get("/get_all_link_data", async(req, res) => {
+    try{
+        const all_data = await Link.find({});
+        res.status(200).json(all_data);
+    }catch(error){
+        console.error(error)
+        res.status(500).json({message: error.message})
+    }
+})
+
 
 const startServer = async () => {
     try{
