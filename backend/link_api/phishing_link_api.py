@@ -6,6 +6,8 @@ from urllib.parse import urlparse
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from mangum import Mangum
+
 from models.EngineResults import EngineResults
 from models.PhishingLink import PhishingLink
 from models.URLScanResponse import URLScanResponse
@@ -22,6 +24,7 @@ import sys
 sys.dont_write_bytecode = True
 
 app = FastAPI()
+handler = Mangum(app)
 
 app.add_middleware(
     CORSMiddleware,
@@ -47,6 +50,11 @@ def get_analytics_headers(scanned_url: URLScanResponse):
     "x-apikey": VIRUS_TOTAL
     }
     return url, headers
+
+@app.get("/health_status")
+async def get_health_status():
+    return{"Status Code":200,"Message":"All systems go"}
+
 
 @app.post("/link_prediction/")
 async def inhouse_model_prediction(user_req: PhishingLink):
@@ -134,3 +142,5 @@ async def virus_total_analysis(scanned_url: URLScanResponse):
         # Logging
         logger.error(f"RequestError: virus_total_analysis {exc}")
         raise HTTPException(status_code=500, detail=f"HTTP request failed: {exc}")
+    
+
