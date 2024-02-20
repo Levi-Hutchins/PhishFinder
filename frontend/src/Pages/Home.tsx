@@ -25,7 +25,7 @@ const Home: React.FC = () => {
       <header className="App-header">
         <SwimmingFish />
         <div className="title-container">
-          <h2 className="phishguard-title">Catch-A-Phish</h2>
+          <h2 className="phishguard-title">PhishFinder</h2>
           {!isSubmitted && (
             <InputBox onApiDataReceived={handleApiDataReceived} />
           )}
