@@ -1,4 +1,5 @@
 import { TailSpin } from "react-loader-spinner";
+import LinkModal from "../Modals/SubmitLinkModal";
 import { UrlScanResponse, LinkPrediction, InputBoxProps } from "./Interfaces";
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
@@ -9,6 +10,7 @@ const InputBox: React.FC<InputBoxProps> = ({ onApiDataReceived }) => {
   const [urlLink, setUrlLink] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [isFocused, setFocused] = useState(false);
+  const [isModalOpen, setModalOpen]= useState(false);
 
   const handleFocused = () => {
     setFocused(true);
@@ -24,6 +26,7 @@ const InputBox: React.FC<InputBoxProps> = ({ onApiDataReceived }) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // Add better UI feature for invalid URLs
+    <LinkModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
     if (urlLink == "") {
       alert("Please Enter Valid URL");
       return;

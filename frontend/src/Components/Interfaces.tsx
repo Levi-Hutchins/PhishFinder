@@ -34,3 +34,10 @@ export interface URLResultsProps{
     
     urlScanData: UrlScanResponse
 }
+
+
+export interface LinkModalProps{
+    isOpen: boolean;
+    onClose: () => void;
+    
+}
