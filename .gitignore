@@ -3,3 +3,6 @@ backend/scripts/config/API_KEYS.py
 backend/link_api/scripts/config/API_KEYS.py
 backend/link_api/scripts/config/__pycache__/API_KEYS.cpython-311.pyc
 *.pyc
+backend/apiv2/link_api/scripts/config/API_KEYS.py
+backend/apiv2/link_api/.gitignore
+backend/apiv2/express_db_client/.gitignore
