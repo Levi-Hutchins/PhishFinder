@@ -3,7 +3,7 @@ const winstonDevConsole = require("@epegzz/winston-dev-console").default;
 const util = require("util");
 
 let log = createLogger({
-  level: 'silly', // or use process.env.LOG_LEVEL
+  level: 'silly', 
 });
 
 log = winstonDevConsole.init(log);
