@@ -1,6 +1,5 @@
 const express = require('express');
 const emailController = require('../api/controllers/emailController');
-const {boy, validate} = require('express-validation');
 
 const router = express.Router();
 
