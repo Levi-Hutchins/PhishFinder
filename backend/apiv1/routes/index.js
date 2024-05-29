@@ -6,7 +6,7 @@ const healthRoutes = require('./healthRoutes');
 const router = express.Router();
 
 router.use('/link', linkRoutes);
-router.use('/mail', emailRoutes);
+router.use('/email', emailRoutes);
 router.use('/health', healthRoutes);
 
 module.exports = router;

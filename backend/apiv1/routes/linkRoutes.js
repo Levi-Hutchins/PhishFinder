@@ -10,7 +10,6 @@ router.post(
     '/insert_link_data',
     [
       body('link').isURL(),
-      body('description').optional().isLength({ min: 1, max: 500 })
     ],
     linkController.insertLinkData
   );
