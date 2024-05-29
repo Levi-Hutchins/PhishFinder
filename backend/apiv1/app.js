@@ -18,11 +18,6 @@ app.use((error, req, res, next) => {
   res.status(500).send("An Error Occured");
 });
 
-app.get("/health_status", (req, res) => {
-  logger.info("Request made - [GET] /health_status");
-  res.send("Server Currently Running...");
-});
-
 const startServer = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
