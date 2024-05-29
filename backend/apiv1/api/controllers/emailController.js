@@ -11,8 +11,8 @@ exports.getEmailData = async (req, res) => {
       }
       try{
         const emailData = await emailService.findAllEmails({});
-        return res.status(200).json(emailData);
         logger_.info("All Data Successfully Returned");
+        return res.status(200).json(emailData);
       }catch(error){
         logger_.error("Error occured fetching all emails");
         logger_.error(error.message);
