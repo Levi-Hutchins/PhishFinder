@@ -1,9 +1,17 @@
 const { createLogger, format, transports } = require("winston");
 const winstonDevConsole = require("@epegzz/winston-dev-console").default;
-const util = require("util");
+require("dotenv").config;
+require("winston-mongodb");
+
+const mongodbUri = process.env.MONGODB_URI
+
 
 let log = createLogger({
-  level: 'silly', 
+  level: 'silly',
+  format: format.combine(
+    format.timestamp(),
+    format.json()
+  )
 });
 
 log = winstonDevConsole.init(log);
@@ -15,9 +23,11 @@ log.add(
 );
 
 
-module.exports = log
+log.add(new transports.MongoDB({
+  level: 'info', 
+  db: mongodbUri, 
+  collection: 'logs',
+  options: { useUnifiedTopology: true }
+}));
 
-
-// Transporting logs
-// https://betterstack.com/community/guides/logging/how-to-install-setup-and-use-winston-and-morgan-to-log-node-js-applications/
-// https://www.npmjs.com/package/winston-mongodb
+module.exports = log;
