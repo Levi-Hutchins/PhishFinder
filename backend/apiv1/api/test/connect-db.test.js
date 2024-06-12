@@ -1,4 +1,4 @@
-const connectDB = require('../../utils/connect-db');
+const connectDB = require('../utils/connect-db');
 
 jest.mock('mongodb', () => {
   return {

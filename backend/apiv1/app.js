@@ -12,15 +12,10 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use('/api', routes);
 
-app.use((error, req, res, next) => {
+app.use((error, req, res) => {
   logger.error("Occurred Here");
   logger.error(error.stack || error);
   res.status(500).send("An Error Occured");
-});
-
-app.get("/health_status", (req, res) => {
-  logger.info("Request made - [GET] /health_status");
-  res.send("Server Currently Running...");
 });
 
 const startServer = async () => {
@@ -29,7 +24,7 @@ const startServer = async () => {
       useNewURLParser: true,
       useUnifiedTopology: true,
     });
-    logger.silly("MongoDB Connected Established");
+    logger.info("MongoDB Connected Established");
     app.listen(PORT, () => logger.silly("Server Now Running"));
   } catch (error) {
     logger.error("Error connection to MongoDB ", error);

@@ -22,11 +22,11 @@ exports.getLinkData = async (req, res) => {
 
 exports.insertLinkData = async (req, res) => {
   logger_.info("Request made - [POST] /insert_link_data");
-  if (!errors.isEmpty()) {
-    logger_.error("Validation Failed - [POST] /insert_link_data");
-    return res.status(400).json({ message: "Bad Input" });
-  }
-  const existingLink = await linkService.findOne({ link: req.body.link });
+  // if (!errors.isEmpty()) {
+  //   logger_.error("Validation Failed - [POST] /insert_link_data");
+  //   return res.status(400).json({ message: "Bad Input" });
+  // }
+  const existingLink = await linkService.findLink({ link: req.body.link });
   if (existingLink) {
     logger_.warn("Duplicate Link - Not Inserted");
     return res.status(409).json({ message: "Duplicate Link" });
