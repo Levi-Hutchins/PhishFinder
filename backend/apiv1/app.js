@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use('/api', routes);
 
-app.use((error, req, res, next) => {
+app.use((error, req, res) => {
   logger.error("Occurred Here");
   logger.error(error.stack || error);
   res.status(500).send("An Error Occured");
