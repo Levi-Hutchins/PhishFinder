@@ -30,6 +30,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Navigate to Backend
+        run: cd/backend/apiv1
+
       - name: Install ESLint
         run: |
           npm install eslint@8.10.0
@@ -37,7 +40,7 @@ jobs:
 
       - name: Run ESLint
         run: npx eslint .
-          --config .eslintrc.js
+          --config .eslintrc.config.mjs
           --ext .js,.jsx,.ts,.tsx
           --format @microsoft/eslint-formatter-sarif
           --output-file eslint-results.sarif
