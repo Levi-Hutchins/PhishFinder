@@ -1,6 +1,6 @@
 const { createLogger, format, transports } = require("winston");
 const winstonDevConsole = require("@epegzz/winston-dev-console").default;
-require("dotenv").config;
+const localConfig = require("dotenv").config();
 require("winston-mongodb");
 
 const mongodbUri = process.env.MONGODB_URI
@@ -26,7 +26,20 @@ log.add(
 log.add(new transports.MongoDB({
   level: 'info', 
   db: mongodbUri, 
-  collection: 'logs',
+  collection: 'info-logs',
+  options: { useUnifiedTopology: true }
+}));
+
+log.add(new transports.MongoDB({
+  level: 'warn', 
+  db: mongodbUri, 
+  collection: 'warn-logs',
+  options: { useUnifiedTopology: true }
+}));
+log.add(new transports.MongoDB({
+  level: 'error', 
+  db: mongodbUri, 
+  collection: 'error-logs',
   options: { useUnifiedTopology: true }
 }));
 
