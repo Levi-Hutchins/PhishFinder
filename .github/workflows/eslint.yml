@@ -34,6 +34,7 @@ jobs:
       - name: Navigate to Service
         run: |
           cd backend/apiv1
+          ls
 
       - name: Install ESLint
         run: |
