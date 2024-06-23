@@ -115,7 +115,7 @@ const InputBox: React.FC<InputBoxProps> = ({ onApiDataReceived }) => {
             placeholder="Enter a URL"
             style={{
               color: "#f3f6f9",
-              backgroundColor: "#4B4B4B",
+              backgroundColor: "#222839",
               flex: 1, // Ensures input stretches to fill space
               //border: 'blue',
               padding: "10px", // Adjust padding as needed

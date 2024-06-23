@@ -1,10 +1,11 @@
 {
-  "name": "lamda_db_client",
+  "name": "mongo_service",
   "version": "1.0.0",
   "description": "",
   "main": "app.mjs",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
@@ -25,9 +26,9 @@
     "winston-mongodb": "^5.1.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.4.0",
-    "eslint": "^9.4.0",
-    "globals": "^15.4.0",
+    "@eslint/js": "^9.5.0",
+    "eslint": "^9.5.0",
+    "globals": "^15.6.0",
     "jest": "^29.7.0"
   }
 }
