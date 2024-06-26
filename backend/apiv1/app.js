@@ -24,7 +24,7 @@ const startServer = async () => {
       useUnifiedTopology: true,
     });
     logger.info("MongoDB Connected Established");
-    app.listen(PORT, () => logger.silly("Server Now Running"));
+    app.listen(PORT, () => logger.info("Server Now Running"));
   } catch (error) {
     logger.error("Error connection to MongoDB ", error);
   }
