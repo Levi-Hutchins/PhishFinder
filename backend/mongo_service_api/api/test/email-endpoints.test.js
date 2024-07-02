@@ -1,7 +1,7 @@
 const request = require("supertest");
 const app = require("../../app");
-jest.useFakeTimers();
 
+jest.useFakeTimers();
 
 describe("Test Email Service Functionality", () => {
   it("tests bad auth /api/email/get_email_data", async () => {
