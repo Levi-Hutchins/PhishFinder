@@ -1,6 +1,7 @@
 const express = require('express');
 const linkController  = require('../api/controllers/linkController');
 const { body, validationResult } = require("express-validator");
+const limiter = require('../api/utils/ratelimiter');
 
 const router = express.Router();
 
@@ -11,6 +12,7 @@ router.post(
     [
       body('link').isURL(),
     ],
+    limiter,
     linkController.insertLinkData
   );
 

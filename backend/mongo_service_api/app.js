@@ -1,16 +1,19 @@
 const express = require("express");
 const routes = require("./routes");
-
 const logger = require("./api/utils/logger");
 const mongoose = require("mongoose");
+const limiter = require("./api/utils/ratelimiter");
 
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+
 app.use(express.json());
 app.use('/api', routes);
+app.use(limiter);
 
 app.use((error, req, res, next) => {
   logger.error("Unexpected Error Occured");
