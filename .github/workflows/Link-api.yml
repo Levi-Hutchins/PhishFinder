@@ -6,7 +6,6 @@ on:
       - main 
 
 jobs:
-
   CI:
     runs-on: ubuntu-latest
     steps:   
@@ -22,25 +21,36 @@ jobs:
           cd backend/link_prediction_api
           pip3 install virtualenv
 
-      - name:  Virtual ENV
+      - name: Cache dependencies
+        id: cache-deps
         uses: actions/cache@v2
-        id: cache-venv # name for referring later
         with:
-          path: venv 
+          path: backend/link_prediction_api/venv
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
             ${{ runner.os }}-venv-
 
-      - name: Activate Virtual ENV
+      - name: Setup Virtual Environment
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cd backend/link_prediction_api
-          python -m venv venv && source venv/bin/activate && pip3 install -r requirements.txt
-        if: steps.cache-venv.outputs.cache-hit != 'true'
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Activate Virtual ENV and Install Dependencies
+        if: steps.cache-deps.outputs.cache-hit == 'true'
+        run: |
+          cd backend/link_prediction_api
+          source venv/bin/activate
+          pip install -r requirements.txt
 
       - name: Run Tests   
         run: |
           cd backend/link_prediction_api
-          . venv/bin/activate && pytest
+          source venv/bin/activate
+          pytest
+
       - name: Create archive of dependencies
         run: |
           cd backend/link_prediction_api
@@ -57,7 +67,8 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: api
-          path: api.zip
+          path: backend/link_prediction_api/api.zip
+
 
 
   # CD:
