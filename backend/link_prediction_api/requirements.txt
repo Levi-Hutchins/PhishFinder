@@ -121,7 +121,6 @@ playsound==1.2.2
 pluggy==1.5.0
 pprintpp==0.4.0
 prompt-toolkit==3.0.43
-protobuf==4.25.3
 psutil==5.9.8
 ptyprocess==0.7.0
 pure-eval==0.2.2
