@@ -1,14 +1,13 @@
 const emailService = require('../services/emailService');
-const logger = require('../utils/logger');
 const logger_ = require('../utils/logger');
 require("dotenv").config;
 
 exports.getEmailData = async (req, res) => {
     logger_.info("Request made - [GET] /getEmailData");
-    if (req.headers["auth"] !== process.env.AUTH) {
-        logger_.warn("Authentication Failed", req.body);
-        logger_.warn("Headers: ", req.headers )
-        return res.status(41).json({ message: "Unauthorised" });
+
+    if (req.headers["auth"] != process.env.AUTH || req.headers["auth"] == undefined) {
+        logger_.warn("Authentication Failed"+ JSON.stringify(req.body) +"\nHeaders: "+ JSON.stringify(req.headers));
+        return res.status(401).json({ message: "Unauthorised" });
       }
       try{
         const emailData = await emailService.findAllEmails({});
@@ -21,8 +20,16 @@ exports.getEmailData = async (req, res) => {
       }
 }
 
+
+
+
 exports.insertEmailData = async(req, res) =>{
   logger_.info("Request made - [POST] /insert_email_data/");
+
+  if (req.headers["auth"] !== process.env.AUTH || req.headers["auth"] == undefined) {
+    logger_.warn("Authentication Failed"+ JSON.stringify(req.body) +"\nHeaders: "+ JSON.stringify(req.headers));
+    return res.status(401).json({ message: "Unauthorised" });
+  }
 
   const exisitingEmail = await emailService.findEmail(req.body.email_text);
   if (exisitingEmail) {
@@ -30,19 +37,19 @@ exports.insertEmailData = async(req, res) =>{
     return res.status(200).json({ message: "Duplicate Email" });
   }
 
-  var email_data = null;
+  var emailData = null;
   try {
-    email_data = await emailService.createEmail(req.body);
-    logger_.info("Successful Insertion: " ,req.body);
-    res.status(200).json(email_data);
+    emailData = await emailService.createEmail(req.body);
+    logger_.info("Successful Insertion: " ,JSON.stringify(req.body));
+    res.status(200).json(emailData);
   } catch (error) {
-    logger_.error("Failed Email Insertion ", error);
+    logger_.error("Failed Email Insertion ", JSON.stringify(error));
     res.status(500).json({ message: "Failed Insertion" });
   }
   try {
-    const isNewEmailInDB = await emailService.findEmail(email_data);
+    const isNewEmailInDB = await emailService.findEmail(emailData);
     if (isNewEmailInDB) logger_.info("Email Inserted Successfully");
   } catch (error) {
-    logger_.error("Email Not Found - After Insertion ", error);
+    logger_.error("Email Not Found - After Insertion ", JSON.stringify(error));
   }
 }
