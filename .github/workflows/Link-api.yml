@@ -46,8 +46,13 @@ jobs:
           cd backend/link_prediction_api
           cd ./venv/lib/python3.11/site-packages
           zip -r9 ../../../../api.zip .
+          ls
+          
       - name: Add API files to Zip file
-        run: cd backend/link_prediction_api/api && zip -g ./api.zip -r .
+        run: |
+          ls
+          cd backend/link_prediction_api/api && zip -g ./api.zip -r .
+
       - name: Upload zip file artifact
         uses: actions/upload-artifact@v2
         with:
