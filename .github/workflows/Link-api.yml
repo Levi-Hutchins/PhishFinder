@@ -12,17 +12,15 @@ jobs:
     steps:   
       - uses: actions/checkout@v2
       
-      - name: Navigate to FastAPI Service
-        run: |
-          cd backend/link_prediction_api
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.7
 
       - name: Install Python Virtual ENV
-        run: pip3 install virtualenv
+        run: |
+          cd backend/link_prediction_api
+          pip3 install virtualenv
 
       - name:  Virtual ENV
         uses: actions/cache@v2
@@ -34,11 +32,15 @@ jobs:
             ${{ runner.os }}-venv-
 
       - name: Activate Virtual ENV
-        run: python -m venv venv && source venv/bin/activate && pip3 install -r requirements.txt
+        run: |
+          cd backend/link_prediction_api
+          python -m venv venv && source venv/bin/activate && pip3 install -r requirements.txt
         if: steps.cache-venv.outputs.cache-hit != 'true'
 
       - name: Run Tests   
-        run: . venv/bin/activate && pytest
+        run: |
+          cd backend/link_prediction_api
+          . venv/bin/activate && pytest
       - name: Create archive of dependencies
         run: |
           cd ./venv/lib/python3.7/site-packages
