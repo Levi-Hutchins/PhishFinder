@@ -9,9 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
 from models.PhishingLink import PhishingLink
-from models.URLScanResponse import URLScanResponse
 from models.PredictionResponse import PredictionResponse
-from models.Stats import Stats
 
 
 from scripts import url_processing, model_prediction
