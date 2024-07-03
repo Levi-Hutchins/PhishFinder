@@ -1,7 +1,7 @@
 
 import logging
 from logFormat import CustomFormatter
-
+from mangum import Mangum
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -74,3 +74,4 @@ async def inhouse_model_prediction(user_req: PhishingLink):
 
     
 
+handler = Mangum(app=app)
