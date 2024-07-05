@@ -3,7 +3,7 @@ import logging
 from logFormat import CustomFormatter
 from mangum import Mangum
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from mangum import Mangum
@@ -18,12 +18,12 @@ import sys
 sys.dont_write_bytecode = True
 
 #Logging Config 
-logger = logging.getLogger("PhishingLinkAPI")
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger("Link-ML-Service")
+logger.setLevel(logging.INFO)
 
 ch = logging.StreamHandler()
 
-ch.setLevel(logging.DEBUG)
+ch.setLevel(logging.INFO)
 ch.setFormatter(CustomFormatter())
 logger.propagate = False
 logger.addHandler(ch)
@@ -31,8 +31,8 @@ logger.addHandler(ch)
 
 
 app = FastAPI()
-handler = Mangum(app)
-logger.info("phishing_link_api spinning up...")
+
+logger.info("Link-ML-Service Spinning Up...")
 
 app.add_middleware(
     CORSMiddleware,
@@ -43,26 +43,29 @@ app.add_middleware(
 )
 
 @app.get("/health_status")
-async def get_health_status():
-    logger.info("Request Made - [GET] /get_health_status")
-    return{"Status Code":200,"message":"All systems go"}
+async def get_health_status(request: Request):
+    logger.info(f"{request.client.host} {request.method} /get_health_status")
+    return{"message":"All systems go"}
 
 
-@app.post("/link_prediction/")
-async def inhouse_model_prediction(user_req: PhishingLink):
-    logger.info("Request Made - [POST] /link_prediction")
+@app.post("/link_prediction")
+async def link_model_prediction(user_req: PhishingLink, request: Request):
+    logger.info(f"{request.client.host} {request.method} /link_prediction")
 
     x_labels = url_processing.get_features(user_req.url_link)
-
     if x_labels == 404:
         logger.warning(f"Url Processing Status 404: Investigate Link: {user_req.url_link}")
-        return "phishing"
+        return "suspicious"
+    
     # Some exception handling just incase url processing fails
     if len(x_labels) != 9:
-        logger.error(f"URL Processing did not source 9 label, link: {user_req.url_link}")
-        raise HTTPException(status_code=404, detail="Issue with url processing")
-    
+        logger.error(f"URL Processing did not source 9 labels, link: {user_req.url_link}")
+        raise HTTPException(status_code=500, detail="Issue with url processing")
+
     prediction = model_prediction.make_prediction(x_labels)
+
+    if prediction == 500:
+        logger.error(f"Error making prediction {user_req.url_link} {x_labels}")
 
     if prediction[0] == -1: 
         return PredictionResponse(status="phishing")
@@ -74,4 +77,3 @@ async def inhouse_model_prediction(user_req: PhishingLink):
 
     
 
-handler = Mangum(app=app)
