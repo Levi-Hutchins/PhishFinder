@@ -57,7 +57,7 @@ def url_cloudflare_submission(req:PhishingLink):
     payload = {"url": req.url_link}
 
     response = requests.post(os.getenv(CLOUDFLARE_URLSCAN_ENDPOINT), headers=headers, json=payload)
-    
+
     if response.status_code == 200:
         print("Request successful!")
         print(response.json())
@@ -67,11 +67,13 @@ def url_cloudflare_submission(req:PhishingLink):
 
 
 
-
 @app.post("/link_prediction")
-async def link_model_prediction(user_req: PhishingLink, request: Request):
+async def link_model_prediction(user_req: PhishingLink, request: Request, background_tasks: BackgroundTasks):
     logger.info(f"{request.client.host} {request.method} /link_prediction")
 
+    background_tasks.add_task(url_cloudflare_submission, user_req)
+
+    
     x_labels = url_processing.get_features(user_req.url_link)
     if x_labels == 404:
         logger.warning(f"Url Processing Status 404: Investigate Link: {user_req.url_link}")
