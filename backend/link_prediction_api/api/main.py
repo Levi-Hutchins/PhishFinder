@@ -1,12 +1,12 @@
 
 import logging
+import os
+import requests
 from logFormat import CustomFormatter
-from mangum import Mangum
-
-from fastapi import FastAPI, HTTPException, Request
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 
-from mangum import Mangum
 
 from models.PhishingLink import PhishingLink
 from models.PredictionResponse import PredictionResponse
@@ -16,7 +16,7 @@ from scripts import url_processing, model_prediction
 import sys
 
 sys.dont_write_bytecode = True
-
+load_dotenv()
 #Logging Config 
 logger = logging.getLogger("Link-ML-Service")
 logger.setLevel(logging.INFO)
@@ -46,6 +46,26 @@ app.add_middleware(
 async def get_health_status(request: Request):
     logger.info(f"{request.client.host} {request.method} /get_health_status")
     return{"message":"All systems go"}
+
+
+def url_cloudflare_submission(req:PhishingLink):
+
+    headers = {
+    "Content-Type": "application/json",
+    "Authorization": os.getenv(CLOUDFLARE_APIKEY)
+    }
+    payload = {"url": req.url_link}
+
+    response = requests.post(os.getenv(CLOUDFLARE_URLSCAN_ENDPOINT), headers=headers, json=payload)
+    
+    if response.status_code == 200:
+        print("Request successful!")
+        print(response.json())
+    else:
+        print(f"Request failed with status code {response.status_code}")
+        print(response.text)
+
+
 
 
 @app.post("/link_prediction")
