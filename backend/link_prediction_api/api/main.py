@@ -1,22 +1,22 @@
 
 import logging
-import os
-import requests
 from logFormat import CustomFormatter
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 
 
-from models.PhishingLink import PhishingLink
-from models.PredictionResponse import PredictionResponse
+from models.ModelLinkReq import PhishingLink
+from models.ModelPredResponse import PredictionResponse
 
 
 from scripts import url_processing, model_prediction
 import sys
 
+from tasks.cloudflare_url_scan import url_cloudflare_submission
+
+
+
 sys.dont_write_bytecode = True
-load_dotenv()
 #Logging Config 
 logger = logging.getLogger("Link-ML-Service")
 logger.setLevel(logging.INFO)
@@ -48,32 +48,18 @@ async def get_health_status(request: Request):
     return{"message":"All systems go"}
 
 
-def url_cloudflare_submission(req:PhishingLink):
 
-    headers = {
-    "Content-Type": "application/json",
-    "Authorization": os.getenv(CLOUDFLARE_APIKEY)
-    }
-    payload = {"url": req.url_link}
-
-    response = requests.post(os.getenv(CLOUDFLARE_URLSCAN_ENDPOINT), headers=headers, json=payload)
-
-    if response.status_code == 200:
-        print("Request successful!")
-        print(response.json())
-    else:
-        print(f"Request failed with status code {response.status_code}")
-        print(response.text)
+#def cloudflare_submission_anlaysis()
 
 
 
 @app.post("/link_prediction")
 async def link_model_prediction(user_req: PhishingLink, request: Request, background_tasks: BackgroundTasks):
     logger.info(f"{request.client.host} {request.method} /link_prediction")
-
+    logger.debug("test")
     background_tasks.add_task(url_cloudflare_submission, user_req)
 
-    
+
     x_labels = url_processing.get_features(user_req.url_link)
     if x_labels == 404:
         logger.warning(f"Url Processing Status 404: Investigate Link: {user_req.url_link}")
