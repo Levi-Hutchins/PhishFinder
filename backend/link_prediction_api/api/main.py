@@ -9,10 +9,10 @@ from models.ModelLinkReq import PhishingLink
 from models.ModelPredResponse import PredictionResponse
 
 
-from scripts import url_processing, model_prediction
+from utils import url_processing, model_prediction
 import sys
 
-from tasks.cloudflare_url_scan import url_cloudflare_submission
+from tasks.cloudflare_service import url_cloudflare_submission
 
 
 
@@ -49,7 +49,6 @@ async def get_health_status(request: Request):
 
 
 
-#def cloudflare_submission_anlaysis()
 
 
 

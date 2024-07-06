@@ -3,7 +3,7 @@ import logging
 
 import onnxruntime as rt
 import numpy as np
-from scripts.config.paths_config import MODEL_PATH
+from utils.config.paths_config import MODEL_PATH
 
 logger = logging.getLogger("Link-ML-Service")
 

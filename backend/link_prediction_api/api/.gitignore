@@ -2,3 +2,4 @@ env/
 .env
 test.py
 scripts/config/API_KEYS
+scripts/.env

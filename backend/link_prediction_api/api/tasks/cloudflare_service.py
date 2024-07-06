@@ -1,10 +1,11 @@
 import logging
+import json
 import requests
 import os
 from dotenv import load_dotenv
 
 from models import ModelLinkReq
-
+from models.CloudFlareModels import CloudflareScanResponse
 logger = logging.getLogger("Link-ML-Service")
 load_dotenv()
 
@@ -19,7 +20,8 @@ def url_cloudflare_submission(req:ModelLinkReq):
     response = requests.post(os.getenv("CLOUDFLARE_URLSCAN_ENDPOINT"), headers=headers, json=payload)
 
     if response.status_code == 200:
-        print(response.text)
+        url_result = CloudflareScanResponse.model_validate(json.loads(response.text))
+        print(url_result)
     else:
         print(f"Request failed with status code {response.status_code}")
         print(response.text)
