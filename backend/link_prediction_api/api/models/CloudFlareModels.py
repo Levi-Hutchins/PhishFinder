@@ -11,7 +11,7 @@ class Result(BaseModel):
     url: str
     time: datetime
 
-class CloudflareScanResponse(BaseModel):
+class CloudflareScanSubmission(BaseModel):
     success: bool
     messages: List[Message]
     result: Optional[Result] = None

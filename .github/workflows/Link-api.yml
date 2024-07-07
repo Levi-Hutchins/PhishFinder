@@ -48,7 +48,7 @@ jobs:
         run: |
           cd backend/link_prediction_api
           source venv/bin/activate
-          cd backend/link_prediction_api/api
+          cd api
           pytest
 
       - name: Create archive of dependencies
