@@ -44,7 +44,7 @@ app.add_middleware(
 
 @app.get("/health_status")
 async def get_health_status(request: Request):
-    logger.info(f"{request.client.host} {request.method} /get_health_status")
+    #logger.info(f"{request.client.host} {request.method} /get_health_status")
     return{"message":"All systems go"}
 
 
