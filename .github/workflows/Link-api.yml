@@ -17,6 +17,8 @@ jobs:
         run: |
           cd backend/link_prediction_api
           pip3 install virtualenv
+          pip3 install pip-tools
+          python3 -m piptools.scripts.compile -v requirements.in --output-file requirements.txt
 
       - name: Cache dependencies
         id: cache-deps
