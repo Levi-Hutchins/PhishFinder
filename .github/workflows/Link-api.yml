@@ -49,7 +49,7 @@ jobs:
           cd backend/link_prediction_api
           source venv/bin/activate
           cd api
-          pytest
+          python3 -m pytest
 
       - name: Create archive of dependencies
         run: |
