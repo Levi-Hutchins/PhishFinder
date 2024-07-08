@@ -1,6 +1,5 @@
 
-import logging
-from logFormat import CustomFormatter
+from logger_config import logger
 from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -17,16 +16,7 @@ from tasks.cloudflare_service import url_cloudflare_submission
 
 
 sys.dont_write_bytecode = True
-#Logging Config 
-logger = logging.getLogger("Link-ML-Service")
-logger.setLevel(logging.INFO)
 
-ch = logging.StreamHandler()
-
-ch.setLevel(logging.INFO)
-ch.setFormatter(CustomFormatter())
-logger.propagate = False
-logger.addHandler(ch)
 
 
 
@@ -45,6 +35,7 @@ app.add_middleware(
 @app.get("/health_status")
 async def get_health_status(request: Request):
     #logger.info(f"{request.client.host} {request.method} /get_health_status")
+    logger.task("test")
     return{"message":"All systems go"}
 
 
@@ -55,7 +46,6 @@ async def get_health_status(request: Request):
 @app.post("/link_prediction")
 async def link_model_prediction(user_req: PhishingLink, request: Request, background_tasks: BackgroundTasks):
     logger.info(f"{request.client.host} {request.method} /link_prediction")
-    logger.debug("test")
     background_tasks.add_task(url_cloudflare_submission, user_req)
 
 
