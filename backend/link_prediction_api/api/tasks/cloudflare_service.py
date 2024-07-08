@@ -1,22 +1,23 @@
-import logging
 import json
 import requests
 import os
 from dotenv import load_dotenv
-
-from models import ModelLinkReq
+import logging
 from models.CloudFlareModels import CloudflareScanSubmission
-logger = logging.getLogger("Link-ML-Service")
+from models.ModelRepository import URL_Link
 load_dotenv()
 
-def url_cloudflare_submission(req:ModelLinkReq):
-    logger.info("[TASK] Cloudflare URLScan")
+logger = logging.getLogger("Link-ML-Service")
+def url_cloudflare_submission(req:URL_Link):
+
+    logger.task(f"Cloudflare submission: {req.link}")
+
     headers = {
     "Content-Type": "application/json",
     "Authorization": os.getenv("CLOUDFLARE_APIKEY")
     }
-    payload = {"url": req.url_link}
-
+    payload = {"url": req.link}
+    print("here2")
     response = requests.post(os.getenv("CLOUDFLARE_URLSCAN_ENDPOINT"), headers=headers, json=payload)
 
     if response.status_code == 200:
