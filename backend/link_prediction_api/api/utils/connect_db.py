@@ -1,4 +1,5 @@
 import logging
+import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
 
@@ -12,7 +13,7 @@ logger = logging.getLogger("Link-ML-Service")
 
 def create_mongo_client() -> MongoClient:
     try:
-        client: MongoClient = MongoClient(URI)
+        client: MongoClient = MongoClient(os.getenv("MONGODB_URI"))
         return client
     except Exception as e:
         logger.error(f"An error occurred while connecting to MongoDB: {e}")
