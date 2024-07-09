@@ -56,11 +56,11 @@ async def link_model_prediction(user_req: URL_Link, request: Request, background
         logger.error(f"Error making prediction {user_req.link} {x_labels}")
 
     if prediction[0] == -1: 
-        return PredictionResult(status="phishing")
+        return PredictionResult(link_status="phishing")
     elif prediction[0] == 0: 
-        return PredictionResult(status="suspicious")
+        return PredictionResult(link_status="suspicious")
     else: 
-        return PredictionResult(status="legitimate")
+        return PredictionResult(link_status="legitimate")
 
 
     

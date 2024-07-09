@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 class PredictionResult(BaseModel):
-    status: str
+    link_status: str
 
 class URL_Link(BaseModel):
     link: str
