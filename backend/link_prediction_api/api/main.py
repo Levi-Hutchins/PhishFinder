@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from models.ModelRepository import URL_Link, PredictionResult
 from utils import url_processing, model_prediction
 
-from tasks.cloudflare_service import url_cloudflare_submission
+from service.cloudflare_service import url_cloudflare_submission
 
 
 app = FastAPI()

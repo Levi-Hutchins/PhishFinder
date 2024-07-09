@@ -3,11 +3,14 @@ import requests
 import os
 from dotenv import load_dotenv
 import logging
+
+from .mongo_service import insert_cloudflare_scan
 from models.CloudFlareModels import CloudflareScanSubmission
 from models.ModelRepository import URL_Link
-load_dotenv()
 
 logger = logging.getLogger("Link-ML-Service")
+load_dotenv()
+
 def url_cloudflare_submission(req:URL_Link):
 
     logger.task(f"Cloudflare submission: {req.link}")
@@ -17,12 +20,12 @@ def url_cloudflare_submission(req:URL_Link):
     "Authorization": os.getenv("CLOUDFLARE_APIKEY")
     }
     payload = {"url": req.link}
-    print("here2")
     response = requests.post(os.getenv("CLOUDFLARE_URLSCAN_ENDPOINT"), headers=headers, json=payload)
 
     if response.status_code == 200:
-        url_result = CloudflareScanSubmission.model_validate(json.loads(response.text))
-        print(url_result)
+        submission = CloudflareScanSubmission.model_validate(json.loads(response.text))
+        insert_cloudflare_scan(submission)
+        logger.info("Successful Cloudflare Submission")
     else:
-        print(f"Request failed with status code {response.status_code}")
-        print(response.text)
+        logger.error(f"Request failed with status code {response.status_code} {response.text}")
+
