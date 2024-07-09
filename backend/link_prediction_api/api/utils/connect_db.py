@@ -10,7 +10,7 @@ load_dotenv()
 logger = logging.getLogger("Link-ML-Service")
 
 
-def create_mongo_client(URI) -> MongoClient:
+def create_mongo_client() -> MongoClient:
     try:
         client: MongoClient = MongoClient(URI)
         return client

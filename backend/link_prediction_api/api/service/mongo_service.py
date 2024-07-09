@@ -13,7 +13,7 @@ logger = logging.getLogger("Link-ML-Service")
 
 def insert_cloudflare_scan(submission: CloudflareScanSubmission):
 
-    client: MongoClient = create_mongo_client(os.getenv('MONGODB_URI'))
+    client: MongoClient = create_mongo_client()
 
     if client is not None:
         db = client.get_database(os.getenv("DATABASENAME"))
