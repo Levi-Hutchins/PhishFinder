@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from models.ModelRepository import URL_Link, PredictionResult
 from utils import url_processing, model_prediction
 
-from service.cloudflare_service import url_cloudflare_submission
+from service.cloudflare_service import url_cloudflare_submission, get_cloudflare_submission_result
 
 
 app = FastAPI()
@@ -44,7 +44,7 @@ async def link_model_prediction(user_req: URL_Link, request: Request, background
     x_labels = url_processing.get_features(user_req.link)
     if x_labels == 404:
         logger.warning(f"Url Processing Status 404: Investigate Link: {user_req.link}")
-        return "suspicious"
+        return PredictionResult(link_status="suspicious")
     
     if len(x_labels) != 9:
         logger.error(f"URL Processing did not source 9 labels, link: {user_req.link}")
@@ -61,6 +61,13 @@ async def link_model_prediction(user_req: URL_Link, request: Request, background
         return PredictionResult(link_status="suspicious")
     else: 
         return PredictionResult(link_status="legitimate")
+
+@app.get("/get_cloudflare_submission_status")
+async def get_cloudflare_submission_status(url: str, request: Request):
+    logger.info(f"{request.client.host} {request.method} /get_cloudflare_submission?=url{url}")
+
+    return get_cloudflare_submission_result(url)
+   
 
 
     
