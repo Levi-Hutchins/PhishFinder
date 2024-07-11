@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
-from scripts.config.paths_config import DATA, MODEL_PATH
+from api.scripts.config.paths_config import DATA, MODEL_PATH
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
 from sklearn.utils import shuffle

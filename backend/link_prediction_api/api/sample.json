@@ -1,0 +1,248 @@
+{
+    "success": true,
+    "messages": [
+        {
+            "message": "OK"
+        }
+    ],
+    "result": {
+        "scan": {
+            "task": {
+                "uuid": "90d5e990-168d-4b51-be49-188ee9c70b3d",
+                "url": "https://google.com/",
+                "effectiveUrl": "https://www.google.com/sorry/index?continue=https://google.com/&q=EhAqCbrBI4AROAAAAAABbQAcGLqrsrQGIik_0Ki6f-wP9TS7Ucux8PtR4cpLtClxOHt0EfnCukcPtRQ9UM6bhEn_6jIBcloBQw",
+                "status": "Finished",
+                "time": "2024-07-09T01:43:15.514Z",
+                "visibility": "Public",
+                "clientLocation": "US",
+                "clientType": "api",
+                "extraOptions": {
+                    "screenshotsResolutions": ["desktop"]
+                },
+                "scannedFrom": {
+                    "colo": "MAD"
+                },
+                "timeEnd": "2024-07-09T01:43:34.108Z",
+                "errors": [],
+                "success": true,
+                "serverASN": "",
+                "serverLocation": ""
+            },
+            "performance": [
+                {
+                    "name": "https://www.google.com/sorry/index?continue=https://google.com/&q=EhAqCbrBI4AROAAAAAABbQAcGLqrsrQGIik_0Ki6f-wP9TS7Ucux8PtR4cpLtClxOHt0EfnCukcPtRQ9UM6bhEn_6jIBcloBQw",
+                    "entryType": "navigation",
+                    "startTime": 0,
+                    "duration": 1062.9000000003725,
+                    "initiatorType": "navigation",
+                    "nextHopProtocol": "h2",
+                    "renderBlockingStatus": "non-blocking",
+                    "workerStart": 0,
+                    "redirectStart": 0,
+                    "redirectEnd": 0,
+                    "fetchStart": 342.79999999981374,
+                    "domainLookupStart": 342.79999999981374,
+                    "domainLookupEnd": 342.79999999981374,
+                    "connectStart": 383.5,
+                    "secureConnectionStart": 383.5,
+                    "connectEnd": 383.5,
+                    "requestStart": 385.5,
+                    "responseStart": 428.29999999981374,
+                    "firstInterimResponseStart": 0,
+                    "responseEnd": 431.29999999981374,
+                    "transferSize": 3384,
+                    "encodedBodySize": 3084,
+                    "decodedBodySize": 3084,
+                    "responseStatus": 429,
+                    "serverTiming": [],
+                    "unloadEventStart": 0,
+                    "unloadEventEnd": 0,
+                    "domInteractive": 449,
+                    "domContentLoadedEventStart": 449,
+                    "domContentLoadedEventEnd": 449,
+                    "domComplete": 1061.7000000001863,
+                    "loadEventStart": 1061.7000000001863,
+                    "loadEventEnd": 1062.9000000003725,
+                    "type": "navigate",
+                    "redirectCount": 0,
+                    "activationStart": 0,
+                    "criticalCHRestart": 0
+                }
+            ],
+            "cookies": [],
+            "meta": {
+                "processors": {
+                    "tech": [
+                        {
+                            "name": "Java",
+                            "description": "Java is a class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible.",
+                            "slug": "java",
+                            "categories": [
+                                {
+                                    "id": 27,
+                                    "slug": "programming-languages",
+                                    "groups": [9],
+                                    "name": "Programming languages",
+                                    "priority": 5
+                                }
+                            ],
+                            "confidence": 100,
+                            "version": "",
+                            "icon": "Java.svg",
+                            "website": "https://java.com",
+                            "pricing": [],
+                            "cpe": "cpe:2.3:a:oracle:jre:*:*:*:*:*:*:*:*",
+                            "evidence": {
+                                "impliedBy": ["OpenGSE"]
+                            }
+                        },
+                        {
+                            "name": "OpenGSE",
+                            "description": "OpenGSE is a test suite used for testing servlet compliance. It is deployed by using WAR files that are deployed on the server engine.",
+                            "slug": "opengse",
+                            "categories": [
+                                {
+                                    "id": 22,
+                                    "slug": "web-servers",
+                                    "groups": [7],
+                                    "name": "Web servers",
+                                    "priority": 8
+                                }
+                            ],
+                            "confidence": 100,
+                            "version": "",
+                            "icon": "Google.svg",
+                            "website": "https://code.google.com/p/opengse",
+                            "pricing": [],
+                            "cpe": null,
+                            "match": {
+                                "match": "GSE",
+                                "type": "headers",
+                                "regex": {}
+                            },
+                            "evidence": {
+                                "patterns": [
+                                    {
+                                        "type": "headers",
+                                        "regex": "GSE",
+                                        "value": "GSE",
+                                        "match": "GSE",
+                                        "name": "server",
+                                        "confidence": 100,
+                                        "version": "",
+                                        "implies": ["Java"],
+                                        "excludes": []
+                                    }
+                                ],
+                                "impliedBy": []
+                            }
+                        },
+                        {
+                            "name": "reCAPTCHA",
+                            "description": "reCAPTCHA is a free service from Google that helps protect websites from spam and abuse.",
+                            "slug": "recaptcha",
+                            "categories": [
+                                {
+                                    "id": 16,
+                                    "slug": "security",
+                                    "groups": [11],
+                                    "name": "Security",
+                                    "priority": 9
+                                }
+                            ],
+                            "confidence": 100,
+                            "version": "",
+                            "icon": "reCAPTCHA.svg",
+                            "website": "https://www.google.com/recaptcha/",
+                            "pricing": ["freemium", "payg", "poa"],
+                            "cpe": null,
+                            "match": {
+                                "match": "/recaptcha/api.js",
+                                "type": "scriptSrc",
+                                "regex": {}
+                            },
+                            "evidence": {
+                                "patterns": [
+                                    {
+                                        "type": "scriptSrc",
+                                        "regex": "\\/recaptcha\\/(?:api|enterprise)\\.js",
+                                        "value": "https://www.google.com/recaptcha/api.js",
+                                        "match": "/recaptcha/api.js",
+                                        "name": null,
+                                        "confidence": 100,
+                                        "version": "",
+                                        "implies": [],
+                                        "excludes": []
+                                    }
+                                ],
+                                "impliedBy": []
+                            }
+                        },
+                        {
+                            "name": "HTTP/3",
+                            "description": "HTTP/3 is the third major version of the Hypertext Transfer Protocol used to exchange information on the World Wide Web.",
+                            "slug": "http-3",
+                            "categories": [
+                                {
+                                    "id": 19,
+                                    "slug": "miscellaneous",
+                                    "groups": [6],
+                                    "name": "Miscellaneous",
+                                    "priority": 10
+                                }
+                            ],
+                            "confidence": 100,
+                            "version": "",
+                            "icon": "HTTP3.svg",
+                            "website": "https://httpwg.org/",
+                            "pricing": [],
+                            "cpe": null,
+                            "match": {
+                                "match": "h3",
+                                "type": "headers",
+                                "regex": {}
+                            },
+                            "evidence": {
+                                "patterns": [
+                                    {
+                                        "type": "headers",
+                                        "regex": "h3",
+                                        "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+                                        "match": "h3",
+                                        "name": "alt-svc",
+                                        "confidence": 100,
+                                        "version": "",
+                                        "implies": [],
+                                        "excludes": ["HTTP/2"]
+                                    }
+                                ],
+                                "impliedBy": []
+                            }
+                        }
+                    ],
+                    "categories": {
+                        "content": [
+                            {
+                                "id": 123,
+                                "super_category_id": 26,
+                                "name": "News, Portal & Search"
+                            },
+                            {
+                                "id": 26,
+                                "name": "Technology"
+                            },
+                            {
+                                "id": 145,
+                                "super_category_id": 26,
+                                "name": "Search Engines"
+                            },
+                            {
+                                "id": 26,
+                                "name": "Technology"
+                            }
+                        ],
+                        "inherited": {}
+                    },
+                    "rank": {
+                    }
+                }}}}}

@@ -17,6 +17,8 @@ jobs:
         run: |
           cd backend/link_prediction_api
           pip3 install virtualenv
+          pip3 install pip-tools
+          python3 -m piptools.scripts.compile -v requirements.in --output-file requirements.txt
 
       - name: Cache dependencies
         id: cache-deps
@@ -46,25 +48,27 @@ jobs:
         run: |
           cd backend/link_prediction_api
           source venv/bin/activate
-          pytest
+          cd api
+          python3 -m pytest
 
-      - name: Create archive of dependencies
-        run: |
-          cd backend/link_prediction_api
-          cd ./venv/lib/python3.11/site-packages
-          zip -r9 ../../../../api.zip .
-          ls
+      # No longer deploying to AWS
+      # - name: Create archive of dependencies
+      #   run: |
+      #     cd backend/link_prediction_api/
+      #     cd ./venv/lib/python3.11/site-packages
+      #     zip -r9 ../../../../api.zip .
+      #     ls
           
-      - name: Add API files to Zip file
-        run: |
-          ls
-          cd backend/link_prediction_api/api && zip -g ./api.zip -r .
+      # - name: Add API files to Zip file
+      #   run: |
+      #     ls
+      #     cd backend/link_prediction_api/api && zip -g ./api.zip -r .
 
-      - name: Upload zip file artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: api
-          path: backend/link_prediction_api/api.zip
+      # - name: Upload zip file artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: api
+      #     path: backend/link_prediction_api/api.zip
 
 
 

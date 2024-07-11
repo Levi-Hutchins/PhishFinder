@@ -1,0 +1,42 @@
+{
+  "success": false,
+  "messages": [
+    {
+      "message": "Scan Failed"
+    }
+  ],
+  "result": {
+    "scan": {
+      "task": {
+        "uuid": "87b49869-df1c-4e6d-bcc6-2e21867029a9",
+        "url": "https:/www.newurl7.com/",
+        "effectiveUrl": "https://www.newurl7.com/",
+        "status": "Finished",
+        "time": "2024-07-10T01:46:41.835Z",
+        "visibility": "Unlisted",
+        "clientLocation": "US",
+        "clientType": "api",
+        "extraOptions": {
+          "screenshotsResolutions": [
+            "desktop"
+          ]
+        },
+        "scannedFrom": {
+          "colo": ""
+        },
+        "timeEnd": "2024-07-10T01:46:46.251Z",
+        "errors": [
+          {
+            "name": "DNS resolution Error",
+            "message": "DNS resolution failed",
+            "detail": "",
+            "code": 5001
+          }
+        ],
+        "success": false,
+        "serverASN": "",
+        "serverLocation": ""
+      }
+    }
+  }
+}
