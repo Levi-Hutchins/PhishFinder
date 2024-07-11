@@ -1,45 +1,26 @@
-import React from "react";
-import SwimmingFish from "../Components/SwimmingFish";
+import React, { useRef, useEffect } from "react";
+import video from "../assets/bg_vid.mp4";
+import "../Styles/Video.css";
+import "@fontsource/archivo-black"; 
+import "../Styles/Home.css"
 import InputBox from "../Components/InputBox";
-import "../Styles/App.css";
-import { useState } from "react";
-import URLResults from "../Components/URLResults";
-import {
-  UrlScanResponse,
-  UrlStats,
-  EngineResults,
-} from "../Components/Interfaces";
 
 const Home: React.FC = () => {
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [urlAPIData, setUrlAPIData] = useState<UrlScanResponse>();
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-  const handleApiDataReceived = (data: UrlScanResponse) => {
-    setUrlAPIData(data);
-    setIsSubmitted(true);
-  };
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 0.9; // Set playback speed to 0.5x
+    }
+  }, []);
 
-  console.log(urlAPIData?.stats);
   return (
-    <>
-      <header className="App-header">
-        <SwimmingFish />
-        <div className="title-container">
-          <h2 className="phishguard-title">PhishFinder</h2>
-          {!isSubmitted && (
-            <InputBox onApiDataReceived={handleApiDataReceived} />
-          )}
-        </div>
-      </header>
-      {isSubmitted && urlAPIData && (
-        // Render your new components here using the apiData
-        <URLResults
-          linkPrediction={urlAPIData.linkPrediction}
-          stats={urlAPIData.stats}
-          results={urlAPIData.results}
-        />
-      )}
-    </>
+    <div className="main">
+      <div className="overlay"></div>
+      <video ref={videoRef} src={video} autoPlay loop muted />
+      <h1 className="phishfinder-title-PHISH">Phish</h1>
+      <h1 className="phishfinder-title-FINDER">Finder</h1>
+    </div>
   );
 };
 
