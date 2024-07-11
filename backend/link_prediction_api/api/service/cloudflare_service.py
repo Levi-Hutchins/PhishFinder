@@ -9,6 +9,7 @@ import json
 from .mongo_service import insert_cloudflare_scan, get_uuid_from_url
 from models.CloudFlareModels import CloudflareScanSubmission, CloudflareScanResult
 from models.CloudflareFailedScan import FailedScan
+from models.testmodel import Response
 from models.ModelRepository import URL_Link
 
 logger = logging.getLogger("Link-ML-Service")
@@ -24,7 +25,7 @@ def url_cloudflare_submission(req: URL_Link) -> None:
     payload = {"url": req.link}
 
     response = requests.post(os.getenv("CLOUDFLARE_URLSCAN_ENDPOINT"), headers=headers, json=payload)
-
+    print(response)
     if response.status_code == 200:
         submission = CloudflareScanSubmission.model_validate(response.json())
         if insert_cloudflare_scan(submission):
@@ -35,30 +36,36 @@ def url_cloudflare_submission(req: URL_Link) -> None:
         logger.error(f"Request failed with status code {response.status_code} {response.text}")
 
 
-def get_cloudflare_submission_result(url: str) -> CloudflareScanResult:
+def get_cloudflare_submission_result(url: str) -> CloudflareScanResult | Response:
     print(url)
-    uuid = get_uuid_from_url(url)
-
-    if uuid == None: return None
+    requested_uuid = get_uuid_from_url(url)
+    print(requested_uuid)
+    if requested_uuid == False: 
+        return False
+    
     headers = {
         "Content-Type": "application/json",
         "Authorization": os.getenv("CLOUDFLARE_APIKEY")
     }
-    print(uuid)
-    scan_results = requests.get(os.getenv("CLOUDFLARE_RESULT_ENDPOINT")+uuid, headers=headers)
+
+    scan_results = requests.get(os.getenv("CLOUDFLARE_RESULT_ENDPOINT")+requested_uuid, headers=headers)
     print(scan_results.json())
     if scan_results.status_code == 200 and scan_results.json()['success'] == True:
-        result = CloudflareScanResult.model_validate(scan_results.json())
-        print(result)
-        if result.result.scan["task"].status != "Finished":
-            return "Scanning"
+        url_result = CloudflareScanResult.model_validate(scan_results.json())
+        print("here22")
+
+        if url_result.result.scan.task.status != "Finished":
+            print("here13")
+
+            logger.warn(f"Scan {requested_uuid} fetched successfully: still scanning")
+            return "Scanning In Progress"
         else: 
-            logger.info(f"Result fetched uuid: {uuid}")
-            return result
+            logger.info(f"Scan results {requested_uuid} fetched successfully")
+            return url_result
     if scan_results.status_code == 200 and scan_results.json()['success'] == False:
-        #print(scan_results.json())
-        result = parse_obj_as(FailedScan, json.loads(scan_results.json()))
-        print(result)
+        failed_scan: FailedScan = FailedScan.model_validate(scan_results.json())
+        logger.error(f"Failed Scan: {failed_scan.model_dump()}")
+        print(url_result)
 
     
     

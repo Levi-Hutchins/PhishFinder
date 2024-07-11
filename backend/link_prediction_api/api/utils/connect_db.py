@@ -20,5 +20,3 @@ def create_mongo_client() -> MongoClient:
         return None
     
     
-
-    

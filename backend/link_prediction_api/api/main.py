@@ -66,7 +66,14 @@ async def link_model_prediction(user_req: URL_Link, request: Request, background
 async def get_cloudflare_submission_status(url: str, request: Request):
     logger.info(f"{request.client.host} {request.method} /get_cloudflare_submission?=url{url}")
 
-    return get_cloudflare_submission_result(url)
+    result = get_cloudflare_submission_result(url)
+    if not result:
+        logger.warning(f"URL not found in DB: {url}")
+        return {"status": "Not Found"}
+    else:
+        logger.info(f"Cloudflare Scan returned: {result.model_dump()}")
+        return {"status": "Success", "scan": result.model_dump()}
+
    
 
 
