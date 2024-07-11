@@ -51,23 +51,24 @@ jobs:
           cd api
           python3 -m pytest
 
-      - name: Create archive of dependencies
-        run: |
-          cd backend/link_prediction_api/
-          cd ./venv/lib/python3.11/site-packages
-          zip -r9 ../../../../api.zip .
-          ls
+      # No longer deploying to AWS
+      # - name: Create archive of dependencies
+      #   run: |
+      #     cd backend/link_prediction_api/
+      #     cd ./venv/lib/python3.11/site-packages
+      #     zip -r9 ../../../../api.zip .
+      #     ls
           
-      - name: Add API files to Zip file
-        run: |
-          ls
-          cd backend/link_prediction_api/api && zip -g ./api.zip -r .
+      # - name: Add API files to Zip file
+      #   run: |
+      #     ls
+      #     cd backend/link_prediction_api/api && zip -g ./api.zip -r .
 
-      - name: Upload zip file artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: api
-          path: backend/link_prediction_api/api.zip
+      # - name: Upload zip file artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: api
+      #     path: backend/link_prediction_api/api.zip
 
 
 
