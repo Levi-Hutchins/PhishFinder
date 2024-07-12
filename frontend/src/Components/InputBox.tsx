@@ -5,7 +5,9 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 
-const InputBox: React.FC<InputBoxProps> = ({ onApiDataReceived }) => {
+import "../Styles/InputBox.css"
+
+const InputBox: React.FC<{}> = () => {
   const [inputValue, setInputValue] = useState("");
   const [urlLink, setUrlLink] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -25,7 +27,6 @@ const InputBox: React.FC<InputBoxProps> = ({ onApiDataReceived }) => {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    // Add better UI feature for invalid URLs
     <LinkModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
     if (urlLink == "") {
       alert("Please Enter Valid URL");
@@ -36,28 +37,10 @@ const InputBox: React.FC<InputBoxProps> = ({ onApiDataReceived }) => {
     setLoading(true);
     console.log(JSON.stringify({ url_link: urlLink }));
     try {
-      const virusTotalScan = await fetch(
-        "http://127.0.0.1:8000/virus_total_urlscan/",
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          method: "POST",
+      // make request here
+        console.log("submitted")
 
-          mode: "cors",
 
-          body: JSON.stringify({ url_link: urlLink }),
-        }
-      );
-
-      if (!virusTotalScan.ok) {
-        throw new Error(`Error: ${virusTotalScan.status}`);
-      }
-      const urlScanData: UrlScanResponse = await virusTotalScan.json();
-      onApiDataReceived(urlScanData);
-
-      console.log(urlScanData);
     } catch (error) {
       console.error("Oops Issue with request:", error);
       setLoading(false);
@@ -92,11 +75,12 @@ const InputBox: React.FC<InputBoxProps> = ({ onApiDataReceived }) => {
 
   return (
     <>
+    <div className="main">
       <form
         onSubmit={handleSubmit}
         style={{ textAlign: "center", margin: "20px" }}
       >
-        <div
+        <div 
           style={{
             position: "relative",
             display: "flex",
@@ -114,10 +98,10 @@ const InputBox: React.FC<InputBoxProps> = ({ onApiDataReceived }) => {
             onBlur={handleBlur}
             placeholder="Enter a URL"
             style={{
+              width: "50px",
               color: "#f3f6f9",
               backgroundColor: "#222839",
               flex: 1, // Ensures input stretches to fill space
-              //border: 'blue',
               padding: "10px", // Adjust padding as needed
               fontSize: "16px",
               height: "40px", // Adjust height as needed
@@ -174,6 +158,7 @@ const InputBox: React.FC<InputBoxProps> = ({ onApiDataReceived }) => {
           <></>
         )}
       </form>
+      </div>
     </>
   );
 };
